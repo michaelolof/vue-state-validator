@@ -1,0 +1,24 @@
+{
+  "name": "vue-simple-validator",
+  "version": "1.0.0",
+  "description": "\"A simple customizable validator for Vue states\"",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "\"Vue",
+    "Validation\"",
+    "\"Validator\"",
+    "\"Validation\"",
+    "\"Vue",
+    "Forms\"",
+    "\"Forms",
+    "Validation\""
+  ],
+  "author": "michaelolof",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.0.5"
+  }
+}
