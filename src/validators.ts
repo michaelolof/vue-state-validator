@@ -1,11 +1,12 @@
-import { errorCodes } from "./rules/errorCodes";
 import { Rule } from "./rules/index";
 import { required } from "./rules/required";
 
+
 interface ValidatorOptionField {
-  isEmpty: boolean;
-  isInvalid: boolean;
-  errorCode?: string;
+  [x :string]:any;
+  isEmpty?: boolean;
+  isInvalid?: boolean;
+  validator?: string;
 }
 
 export interface ValidatorOption {
@@ -20,19 +21,21 @@ export interface ValidatorOption {
 export function checkForErrors(options :ValidatorOption[]) :ValidatorOptionField[] {
 
   const errors :ValidatorOptionField[] = [];
-  options = options.sort(opt => opt.order);
-
-  for(let option of options) {
-    const opt = {
+  const opts = options
+    .map((option, index) => ({
       field: option.field,
       rules: option.rules && Array.isArray(option.rules) 
         ? option.rules : option.rules && typeof option.rules === "function" 
         ? [option.rules] : [required],
       value: option.value || "value",
-      order: option.order || 1,
+      order: option.order || index,
       validateIf: option.validateIf === undefined ? true : option.validateIf,
-    }
+    }))
+    .sort((a,b) => a.order - b.order);
 
+
+  for(let opt of opts) {
+    
     if(!opt.validateIf) continue; 
 
     const isNotValid = validateField(opt.field, opt.value, opt.rules) === false;
@@ -56,13 +59,14 @@ function validateField(field :ValidatorOptionField, value :string, rules :Rule[]
 
   for(let rule of rules) {
     const validation = rule(val);
+
     
     if(validation.hasError) {
       
-      if(validation.errorCode === errorCodes.isEmpty) field["isEmpty"] = true;
+      if(validation.validator === "required") field["isEmpty"] = true;
       else field["isInvalid"] = true;
 
-      field["errorCode"] = validation.errorCode;
+      field["validator"] = validation.validator;
 
       return false
     }

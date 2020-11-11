@@ -5,7 +5,7 @@ import { required } from "./required";
 
 export const matchLength = (length :number) => (value: any) :RuleReturn => {
 
-  const valid = { hasError: false, errorCode: undefined };
+  const valid = { hasError: false, validator: undefined };
 
   const notRequired = required(value).hasError;
   if(notRequired) return valid;
@@ -13,7 +13,7 @@ export const matchLength = (length :number) => (value: any) :RuleReturn => {
   value = value + "";
   if(value.length !== length) return {
     hasError: true,
-    errorCode: "no-match"
+    validator: "matchLength",
   }
 
   return valid;

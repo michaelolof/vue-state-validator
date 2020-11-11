@@ -3,20 +3,20 @@ import { RuleReturn } from "./index";
 
 export const required = (value :any) :RuleReturn => {
   let hasError = false;
-  let errorCode = "empty";
+  let context = undefined;
 
   if( typeof value === "string" ) value = value.trim();
 
   if( value === undefined || value === null || value === 0 || value == "0" || value.length === 0 ) {
-    return { hasError: true, errorCode };
+    return { hasError: true, validator: "required" };
   }
 
   if( value.length > 0 && value.trim().length === 0 ) {
     return {
       hasError: true,
-      errorCode: "invalid",
+      validator: "required",
     }
   }
 
-  return { hasError, errorCode }
+  return { hasError, validator: context }
 }

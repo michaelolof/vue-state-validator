@@ -2,17 +2,20 @@ import { RuleReturn } from "./index";
 import { required } from "./required";
 
 
-export const min = (minimum :number) => (value: any) :RuleReturn => {
+
+export const contains = (content :string) => (value: any) :RuleReturn => {
 
   const valid = { hasError: false, validator: undefined };
 
   const notRequired = required(value).hasError;
   if(notRequired) return valid;
 
-  if(value < minimum) return {
+  value = value + "";
+  if(value.includes(content) === false) return {
     hasError: true,
-    validator: "min",
+    validator: "contains",
   }
+
 
   return valid;
   
