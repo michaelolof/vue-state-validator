@@ -4,9 +4,10 @@
   "description": "A simple customizable validator engine",
   "main": "dist/index.js",
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"  
+    "build": "./node_modules/.bin/tsc",
+    "test": "./node_modules/.bin/jest",
+    "test:watch": "./node_modules/.bin/jest --watch",
+    "test:coverage": "./node_modules/.bin/jest --coverage"  
   },
   "keywords": [
     "\"Vue",
