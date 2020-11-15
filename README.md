@@ -1,4 +1,4 @@
-#VueLiteValidator
+# VueStateValidator
 
 > A simple customizable validator engine for Vue
 
@@ -6,15 +6,15 @@
 ## Installation
 ```sh
 ## Install Module
-$ npm install --save vue-lite-validator
+$ npm install --save vue-state-validator
 ```
 
 ```ts
 // Install Plugin
 import Vue from "vue";
-import VueLiteValidator from "vue-lite-validator";
+import VueStateValidator from "vue-state-validator";
 
-Vue.use(VueLiteValidator);
+Vue.use(VueStateValidator);
 ```
 
 ## How to use
@@ -22,7 +22,7 @@ Vue.use(VueLiteValidator);
 Define your fields in object like in the data fields shown below.
 Here we trigger validation when the submit button is clicked.
 ```js
-import { required, charRange, wordRange, integer, range, numeric, min, max, validateAndMutate } from "vue-lite-validator";
+import { required, charRange, wordRange, integer, range, numeric, min, max, validateAndMutate } from "vue-state-validator";
 
 {
   data() {
@@ -96,7 +96,7 @@ This will result in a data object that looks like this:
 ```
 You would notice three properties `$isEmpty` `$isInvalid` and `$rule` on the object being validated.
 \
-VueLiteValidator at its core assumes that validation errors can only ever be **empty or wrong.** This means a validation can either fail because the client didn't enter a value, or the client entered a wrong value. 
+VueStateValidator at its core assumes that validation errors can only ever be **empty or wrong.** This means a validation can either fail because the client didn't enter a value, or the client entered a wrong value. 
 We also recognize the need to give detailed error messages which provide context to where the failure occured - this is the information the `$rule` field gives to us. It lets us know which rule caused validation failure. 
 If the validation is successfull, `$rule` is `undefined`
 
@@ -195,7 +195,7 @@ ValidationOption
     order?: number //optional. Defaults to the array index
   }
   ```
-  **`field`** : represents the object that holds the value you want to validate. The field object has a `value` property by default which is to be validated against. Validation is done by attaching an `isEmpty`, `isInvalid` and `validator` property to this object. 
+  **`field`** : represents the object that holds the value you want to validate. The field object has a `value` property by default which is to be validated against. Validation is done by attaching an `$isEmpty`, `$isInvalid` and `$rule` property to this object. 
 
   **`rules`** : This is just an array of `Rule` functions. It is optional. If not passed it will default to an array with 1 `required` rule.
 
@@ -212,39 +212,39 @@ ValidationOption
 : Takes an array of `ValidatorOption` and returns true if valid, false if invalid.
 
 `validateAndMutate(options :ValidatorOption[]) : boolean`
-: Takes an array of `ValidatorOption` and returns true if valid and mutates the field object with `isEmpty` `isInvalid` `validator` properties.
+: Takes an array of `ValidatorOption` and returns true if valid and mutates the field object with `$isEmpty` `$isInvalid` `$rule` properties.
 
 `getErrors(options: ValidatorOption[]) : [Field]`
 : Takes an array of `ValidatorOption` and returns an array of fields that failed validation.
 
 `getErrorsAndMutate(options :ValidatorOption[]) : [Field]`
-: Takes an array of `ValidatorOption` and returns an array of fields that failed validation and also mutates the field object with `isEmpty` `isInvalid` `validator` properties.
+: Takes an array of `ValidatorOption` and returns an array of fields that failed validation and also mutates the field object with `$isEmpty` `$isInvalid` `$rule` properties.
 
 
 ## Built-in Rules
 
-| Syntax                      | Example     | Description     |
-| :---                        |    :----    | :--- |
-| `alpha`                     | `alpha("One")`       | Checks that the value is alphabetic   |
-| `alphaNumeric`              | `alphaNumeric("One2")`        | Checks that the value is alpha numeric      |
-| `charRange(number, number)` | `charRange(2, 7)("One")`        | Checks that the length of characters must be between 2 and 7      |
-| `contains(string)`          | `contains("O")("One")`        | Checks if string is in value      |
-| `decimal`                   | `decimal(1.2)`        | Checks if value is a decimal      |
-| `email`                     | `email("john@doe.com")`        | Checks if value is an email address      |
-| `integer`                   | `integer(12)`        | Checks if value is an integer      |
-| `ipAddress`                 | `ipAddress("127.0.0.1")`        | Checks if value is an IP address      |
-| `macAddress`                | `macAddress("xx:xa:xx:xx:xx:xx")`        | Checks if value is a MAC address      |
-| `match(string)`             | `match(/[a-zA-Z]+/)("One")`        | Checks if value is matched      |
-| `matchLength(number)`       | `matchLength(3)("One")`        | Checks if length of string is matched      |
-| `max(number)`               | `max(10)(4)`        | Checks if value is <= maximum      |
-| `maxChar(number)`           | `maxChar(10)("One")`        | Checks if length of value is <= maximum      |
-| `maxWord(number)`           | `maxWord(2)("John Doe")`        | Checks if the number of words is <= maximum      |
-| `min(number)`               | `min(2)(4)`        | Checks if the value is >= than minimum      |
-| `minChar(number)`           | `min(3)("One")`        | Checks if length of character is >= minimum     |
-| `minWord(number)`           | `minWord(2)("John D Word")`        | Checks if number of words is >= minimum      |
-| `notContain(string)`        | `notContain("&*")("One")`        | Checks if string is not in value      |
-| `numeric`                   | `numeric(1.3)`        | Checks if a value is numeric      |
-| `range(number, number)`     | `range(2, 13)(10)`        | Checks if value is between 2 and 13      |
-| `required`                  | `required("One")`        | Checks that a value is not empty      |
-| `url`               | `url("https://www.google.com")`        | Checks if value is a url      |
-| `wordRange(number, number)` | `wordRange(2, 6)("Big Bang Theory")`        | Checks if number of words is between 2 and 6  |
+| Syntax                      | Example                             | Description     |
+| :---                        |    :----                            | :--- |
+| `alpha`                     | `alpha("One")`                      | Checks that the value is alphabetic   |
+| `alphaNumeric`              | `alphaNumeric("One2")`              | Checks that the value is alpha numeric      |
+| `charRange(number, number)` | `charRange(2, 7)("One")`            | Checks that the length of characters must be between 2 and 7      |
+| `contains(string)`          | `contains("O")("One")`              | Checks if string is in value      |
+| `decimal`                   | `decimal(1.2)`                      | Checks if value is a decimal      |
+| `email`                     | `email("john@doe.com")`             | Checks if value is an email address      |
+| `integer`                   | `integer(12)`                       | Checks if value is an integer      |
+| `ipAddress`                 | `ipAddress("127.0.0.1")`            | Checks if value is an IP address      |
+| `macAddress`                | `macAddress("xx:xa:xx:xx:xx:xx")`   | Checks if value is a MAC address      |
+| `match(string)`             | `match(/[a-zA-Z]+/)("One")`         | Checks if value is matched      |
+| `matchLength(number)`       | `matchLength(3)("One")`             | Checks if length of string is matched      |
+| `max(number)`               | `max(10)(4)`                        | Checks if value is <= maximum      |
+| `maxChar(number)`           | `maxChar(10)("One")`                | Checks if length of value is <= maximum      |
+| `maxWord(number)`           | `maxWord(2)("John Doe")`            | Checks if the number of words is <= maximum      |
+| `min(number)`               | `min(2)(4)`                         | Checks if the value is >= than minimum      |
+| `minChar(number)`           | `min(3)("One")`                     | Checks if length of character is >= minimum     |
+| `minWord(number)`           | `minWord(2)("John D Word")`         | Checks if number of words is >= minimum      |
+| `notContain(string)`        | `notContain("&*")("One")`           | Checks if string is not in value      |
+| `numeric`                   | `numeric(1.3)`                      | Checks if a value is numeric      |
+| `range(number, number)`     | `range(2, 13)(10)`                  | Checks if value is between 2 and 13      |
+| `required`                  | `required("One")`                   | Checks that a value is not empty      |
+| `url`                       | `url("https://www.google.com")`     | Checks if value is a url      |
+| `wordRange(number, number)` | `wordRange(2, 6)("One Two Three")`  | Checks if number of words is between 2 and 6  |

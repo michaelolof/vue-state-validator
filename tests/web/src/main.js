@@ -2,11 +2,11 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store';
-import VueLiteValidator from '../../../dist/index';
+import VueStateValidator from '../../../dist/index';
 
 Vue.config.productionTip = false
 
-Vue.use(VueLiteValidator)
+Vue.use(VueStateValidator)
 
 new Vue({
   router,

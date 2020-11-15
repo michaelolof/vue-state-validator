@@ -4,16 +4,6 @@ import { constants, isControlKey } from "./utils";
 
 
 
-function numericChar(value :any) :Validation {
-  value = (value+"").trim();
-  if((value == ".") || numeric(value).isValid) return {
-    isValid: true,
-    rule: undefined
-  }
-  else return { isValid: false, rule: "numeric" }
-}
-
-
 const handlers = {
   validateOn: {
     validationHandler: "___vueLiteValidatorValidateOnValidationHandler___",
@@ -212,6 +202,16 @@ function buildRulesFromBinding(binding :any) {
 }
 
 
+function numericChar(value :any) :Validation {
+  value = (value+"").trim();
+  if((value == ".") || numeric(value).isValid) return {
+    isValid: true,
+    rule: undefined
+  }
+  else return { isValid: false, rule: "numeric" }
+}
+
+
 export default {
 
   install(Vue :any) {
@@ -223,9 +223,9 @@ export default {
     Vue.directive("validate-length", validateLength )
   },
 
-  validateOn,
-  validatePrevent,
-  validateAllow,
+  // validateOn,
+  // validatePrevent,
+  // validateAllow,
   
 }
 

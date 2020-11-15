@@ -1,16 +1,6 @@
 import { validateAndMutate, validateValue } from "./validators";
 import { alpha, alphaNumeric, integer, max, numeric, maxChar } from "./rules";
 import { constants, isControlKey } from "./utils";
-function numericChar(value) {
-    value = (value + "").trim();
-    if ((value == ".") || numeric(value).isValid)
-        return {
-            isValid: true,
-            rule: undefined
-        };
-    else
-        return { isValid: false, rule: "numeric" };
-}
 const handlers = {
     validateOn: {
         validationHandler: "___vueLiteValidatorValidateOnValidationHandler___",
@@ -156,6 +146,16 @@ function buildRulesFromBinding(binding) {
         rules.push(integer);
     return rules;
 }
+function numericChar(value) {
+    value = (value + "").trim();
+    if ((value == ".") || numeric(value).isValid)
+        return {
+            isValid: true,
+            rule: undefined
+        };
+    else
+        return { isValid: false, rule: "numeric" };
+}
 export default {
     install(Vue) {
         constants.Vue = Vue;
@@ -165,7 +165,4 @@ export default {
         Vue.directive("validate-max", validateMax);
         Vue.directive("validate-length", validateLength);
     },
-    validateOn,
-    validatePrevent,
-    validateAllow,
 };
