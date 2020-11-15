@@ -1,22 +1,14 @@
-import { RuleReturn } from "./index";
-import { min } from "./min";
-import { required } from "./required";
+import { Validation } from "./index";
 
 
-
-export const minWord = (minimum :number) => (value: any) :RuleReturn => {
-
-  const valid = { hasError: false, validator: undefined };
-
-  const notRequired = required(value).hasError;
-  if(notRequired) return valid;
+export const minWord = (minimum :number) => (value: any) :Validation => {
 
   const words = (value+"").trim().split(" ").filter(n => n.length > 0);
-  if(words.length < minimum) return {
-    hasError: true,
-    validator: "minWord",
+  if(minimum <= words.length) return {
+    isValid: true,
+    rule: undefined,
   }
 
-  return valid;
+  else return { isValid: false, rule: "minWord" };
   
 }

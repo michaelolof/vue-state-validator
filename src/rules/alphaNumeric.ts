@@ -1,21 +1,15 @@
-import { RuleReturn } from "./index";
-import { required } from "./required";
+import { Validation } from "./index";
 
 
 
-export const alphaNumeric = (value: any) :RuleReturn => {
+export const alphaNumeric = (value: any) :Validation => {
 
-  const valid = { hasError: false, validator: undefined };
-
-  const notRequired = required(value).hasError;
-  if(notRequired) return valid;
-
-  if(isAlphaNumeric(value) === false) return {
-    hasError: true,
-    validator: "alphaNumeric",
+  if(isAlphaNumeric(value)) return {
+    isValid: true,
+    rule: undefined,
   }
 
-  return valid;
+  else return { isValid: false, rule: "alphaNumeric" };
   
 }
 

@@ -1,22 +1,16 @@
-import { RuleReturn } from "./index";
-import { required } from "./required";
+import { Validation } from "./index";
 
 
 
-export const contains = (content :string) => (value: any) :RuleReturn => {
+export const contains = (content :string) => (value: any) :Validation => {
 
-  const valid = { hasError: false, validator: undefined };
-
-  const notRequired = required(value).hasError;
-  if(notRequired) return valid;
-
-  value = value + "";
-  if(value.includes(content) === false) return {
-    hasError: true,
-    validator: "contains",
+  const isContain = (val :any) => (val+"").includes(content);
+  
+  if(isContain(value)) return {
+    isValid: true,
+    rule: undefined,
   }
 
-
-  return valid;
+  else return { isValid: false, rule: "contains" };
   
 }

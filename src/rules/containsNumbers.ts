@@ -1,26 +1,23 @@
-import { RuleReturn } from "./index";
-import { required } from "./required";
+import { Validation } from "./index";
 
 
 
-export const containsNumbers = (size :number) => (value: any) :RuleReturn => {
+export const containsNumber = (size :number) => (value: any) :Validation => {
 
-  const valid = { hasError: false, validator: undefined };
-
-  const notRequired = required(value).hasError;
-  if(notRequired) return valid;
-
-  let numbersFound = 0;
-  for(let char of (value)+"") {
-    const charIsNumber = isNaN(char as any) === false;
-    if(charIsNumber ) numbersFound++;
+  const numbersFound = () => {
+    let found = 0;
+    for(let char of (value)+"") {
+      const charIsNumber = isNaN(char as any) === false;
+      if(charIsNumber ) found++;
+    }
+    return found;
   }
 
-  if(numbersFound < size) return {
-    hasError: true,
-    validator: "containsNumbers",
+  if(numbersFound() >= size) return {
+    isValid: true,
+    rule: undefined,
   }
 
-  return valid;
+  else return { isValid: false, rule: "containsNumber" };
   
 }

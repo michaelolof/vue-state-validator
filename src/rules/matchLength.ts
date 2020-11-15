@@ -1,21 +1,18 @@
-import { RuleReturn } from "./index";
-import { required } from "./required";
+import { Validation } from "./index";
 
 
-
-export const matchLength = (length :number) => (value: any) :RuleReturn => {
-
-  const valid = { hasError: false, validator: undefined };
-
-  const notRequired = required(value).hasError;
-  if(notRequired) return valid;
-
-  value = value + "";
-  if(value.length !== length) return {
-    hasError: true,
-    validator: "matchLength",
+export const matchLength = (length :number) => (value: any) :Validation => {
+  
+  const isOfLength = (val :any) => {
+    if(typeof val === "string") val = val.trim();
+    const l = (Array.isArray(val) || typeof val === "string") ? val.length : (val+"").length;
+    return l === length;
   }
 
-  return valid;
+  if(isOfLength(value)) return {
+    isValid: true,
+    rule: undefined,
+  }
   
+  else return { isValid: false, rule: "matchLength" }
 }

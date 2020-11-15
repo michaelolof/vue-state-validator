@@ -1,20 +1,14 @@
-import { RuleReturn } from "./index";
-import { required } from "./required";
+import { Validation } from "./index";
 
 
 
-export const numeric = (value: any) :RuleReturn => {
+export const numeric = (value: any) :Validation => {
 
-  const valid = { hasError: false, validator: undefined };
-
-  const notRequired = required(value).hasError;
-  if(notRequired) return valid;
-
-  if(isNaN(value)) return {
-    hasError: true,
-    validator: "numeric",
+  if(!isNaN(value)) return {
+    isValid: true,
+    rule: undefined, 
   }
 
-  return valid;
+  else return { isValid: false, rule: "numeric" };
   
 }

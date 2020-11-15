@@ -1,19 +1,13 @@
-import { RuleReturn } from "./index";
-import { required } from "./required";
+import { Validation,comparisonValue } from "./index";
 
 
-export const min = (minimum :number) => (value: any) :RuleReturn => {
+export const min = (minimum :number) => (value: any) :Validation => {
 
-  const valid = { hasError: false, validator: undefined };
-
-  const notRequired = required(value).hasError;
-  if(notRequired) return valid;
-
-  if(value < minimum) return {
-    hasError: true,
-    validator: "min",
+  if(minimum <= comparisonValue(value)) return {
+    isValid: true,
+    rule: undefined,
   }
 
-  return valid;
-  
+  else return { isValid: false, rule: "min" };
+
 }

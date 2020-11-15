@@ -1,21 +1,14 @@
-import { RuleReturn } from "./index";
-import { required } from "./required";
+import { Validation } from "./index";
 
 
+export const maxChar = (maximum :number) => (value: any) :Validation => {
 
-export const maxChar = (maximum :number) => (value: any) :RuleReturn => {
-
-  const valid = { hasError: false, validator: undefined };
-
-  const notRequired = required(value).hasError;
-  if(notRequired) return valid;
-
-  value = value + "";
-  if(value.length > maximum) return {
-    hasError: true,
-    validator: "maxChar",
+  const smaller = (val :any) => (val+"").length <= maximum;
+  
+  if(smaller(value)) return {
+    isValid: true,
+    rule: undefined,
   }
 
-  return valid;
-  
+  else return { isValid: false, rule: "maxChar" };
 }

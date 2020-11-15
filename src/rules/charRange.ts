@@ -1,23 +1,19 @@
-import { RuleReturn } from "./index";
-import { required } from "./required";
+import { Validation } from "./index";
 import { minChar } from "./minChar";
 import { maxChar } from "./maxChar";
 
 
 
-export const charRange = (minimum :number, maximum :number) => (value: any) :RuleReturn => {
+export const charRange = (minimum :number, maximum :number) => (value: any) :Validation => {
 
-  const valid = { hasError: false, validator: undefined };
+  const smallEnough = (val :any) => minChar(minimum)(value).isValid;
+  const bigEnough = (val :any) => maxChar(maximum)(value).isValid;
 
-  const notRequired = required(value).hasError;
-  if(notRequired) return valid;
+  if((smallEnough(value) && bigEnough(value))) return {
+    isValid: true,
+    rule: undefined,
+  }
 
-  const tooSmall = minChar (minimum)(value);
-  if(tooSmall.hasError) return { hasError: tooSmall.hasError, validator: "charRange" };
+  else return { isValid: false, rule: "charRange" };
 
-  const tooBig = maxChar(maximum)(value);
-  if(tooBig.hasError) return { hasError: tooBig.hasError, validator: "charRange" };
-
-  return valid;
-  
 }

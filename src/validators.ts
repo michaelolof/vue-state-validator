@@ -1,12 +1,13 @@
-import { Rule } from "./rules/index";
-import { required } from "./rules/required";
+import { Rule, Validation } from "./rules/index";
+import { isEmpty, required } from "./rules/required";
+import { set } from "./utils";
 
 
 interface ValidatorOptionField {
   [x :string]:any;
-  isEmpty?: boolean;
-  isInvalid?: boolean;
-  validator?: string;
+  $isEmpty?: boolean;
+  $isInvalid?: boolean;
+  $rule?: string;
 }
 
 export interface ValidatorOption {
@@ -18,9 +19,81 @@ export interface ValidatorOption {
 }
 
 
-export function checkForErrors(options :ValidatorOption[]) :ValidatorOptionField[] {
+export function validate(options :ValidatorOption[]) :boolean {
+  return getErrors(options).length === 0;
+}
 
+
+export function validateAndMutate(options :ValidatorOption[]) :boolean {
+  return getErrorsAndMutate(options).length === 0;
+}
+
+
+export function getErrorsAndMutate(options :ValidatorOption[]) :ValidatorOptionField[] { 
+  return errorGetter(options, option => validateFieldAndMutate(option.field, option.value, option.rules))
+}
+
+
+export function getErrors(options :ValidatorOption[]) :ValidatorOptionField[] {
+  return errorGetter(options, (option) => validateValue(option.field[option.value], option.rules) );
+}
+
+
+export function validateValue(value :any, rules :Rule[]) :boolean {
+
+  for(let rule of rules) {
+    const validation = validateAsOptional(value, rule);
+    if(!validation.isValid) return false;
+  }
+
+  return true;
+
+}
+
+
+function validateFieldAndMutate(field :ValidatorOptionField, value :string, rules :Rule[]) :boolean {
+
+  const val = field[ value ];
+
+  for(let rule of rules) {
+    
+    const validation = validateAsOptional(val, rule);
+    
+    if(!validation.isValid) {
+      
+      if(validation.rule === "required") { 
+        set(field, "$isEmpty", true);
+        set(field, "$isInvalid", false);
+      }
+      else { 
+        set(field, "$isInvalid", true);
+        set(field, "$isEmpty", false);
+      }
+      
+      set(field, "$rule", validation.rule);
+      
+      return false
+      
+    }
+    else {
+
+      set(field, "$isEmpty", false);
+      set(field, "$isInvalid", false);
+      set(field, "$rule", undefined);
+    
+    }
+
+  }
+
+  return true;
+
+}
+
+
+function errorGetter(options :ValidatorOption[], validator:(opt :ValidatedOption) => boolean) :ValidatorOptionField[] {
+  
   const errors :ValidatorOptionField[] = [];
+  
   const opts = options
     .map((option, index) => ({
       field: option.field,
@@ -38,40 +111,36 @@ export function checkForErrors(options :ValidatorOption[]) :ValidatorOptionField
     
     if(!opt.validateIf) continue; 
 
-    const isNotValid = validateField(opt.field, opt.value, opt.rules) === false;
+    const isNotValid = validator(opt) === false;
 
     if(isNotValid) errors.push(opt.field);
+    
   }
 
   return errors;
-  
+
 }
 
 
-export function validate(options :ValidatorOption[]) :boolean {
-  return checkForErrors(options).length > 0;
-}
+function validateAsOptional(value:any, rule :(value :any) => Validation) :Validation {
 
+  const intialValidation = rule(value);
+  if(rule.name === "required") return intialValidation;
 
-function validateField(field :ValidatorOptionField, value :string, rules :Rule[]) :boolean {
-
-  const val = field[ value ];
-
-  for(let rule of rules) {
-    const validation = rule(val);
-
-    
-    if(validation.hasError) {
-      
-      if(validation.validator === "required") field["isEmpty"] = true;
-      else field["isInvalid"] = true;
-
-      field["validator"] = validation.validator;
-
-      return false
-    }
+  if(isEmpty(value) || intialValidation.isValid) return {
+    isValid: true,
+    rule: undefined,
   }
 
-  return true;
+  else return { isValid: false, rule: intialValidation.rule };
 
+}
+
+
+interface ValidatedOption {
+  field :ValidatorOptionField;
+  rules :Rule[];
+  value :string;
+  order :number;
+  validateIf :boolean;
 }

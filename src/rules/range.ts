@@ -1,24 +1,19 @@
-import { RuleReturn } from "./index";
+import { Validation } from "./index";
 import { max } from "./max";
 import { min } from "./min";
-import { required } from "./required";
 
 
 
-export const range = (minimum :number, maximum :number) => (value: any) :RuleReturn => {
+export const range = (minimum :number, maximum :number) => (value: any) :Validation => {
 
-  const valid = { hasError: false, validator: undefined };
+  const smallEnough = (val :any) => min(minimum)(value).isValid;
+  const bigEnough = (val :any) => max(maximum)(value).isValid;
 
-  const notRequired = required(value).hasError;
-  if(notRequired) return valid;
+  if((smallEnough(value) && bigEnough(value))) return {
+    isValid: true,
+    rule: undefined,
+  }
 
-  const tooSmall = min(minimum)(value);
-  if(tooSmall.hasError) return { hasError: tooSmall.hasError, validator: "range" };
+  else return { isValid: false, rule: "range" };
 
-  const tooBig = max(maximum)(value);
-  if(tooBig.hasError) return { hasError: tooBig.hasError, validator: "range" };
-
-
-  return valid;
-  
 }

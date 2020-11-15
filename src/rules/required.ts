@@ -1,22 +1,25 @@
-import { RuleReturn } from "./index";
+import { Validation } from "./index";
 
 
-export const required = (value :any) :RuleReturn => {
-  let hasError = false;
-  let context = undefined;
+export function required(value :any) :Validation {
+  if(isEmpty(value) || value == "0") return { isValid: false, rule: "required" }
+  else return { isValid: true, rule: undefined }
+}
+
+
+export const isEmpty = (value :any) => {
 
   if( typeof value === "string" ) value = value.trim();
 
-  if( value === undefined || value === null || value === 0 || value == "0" || value.length === 0 ) {
-    return { hasError: true, validator: "required" };
+  if( value === undefined || value === null || value.length === 0 || objectIsEmpty(value)) {
+    return true
   }
 
-  if( value.length > 0 && value.trim().length === 0 ) {
-    return {
-      hasError: true,
-      validator: "required",
-    }
-  }
+  else return false;
 
-  return { hasError, validator: context }
+}
+
+
+function objectIsEmpty(obj :any) { 
+  return (Object.keys(obj).length === 0 && obj.constructor === Object)
 }

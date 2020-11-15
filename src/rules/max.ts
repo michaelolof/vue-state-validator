@@ -1,20 +1,14 @@
-import { RuleReturn } from "./index";
-import { required } from "./required";
+import { comparisonValue, Validation } from "./index";
 
 
 
-export const max = (maximum :number) => (value: any) :RuleReturn => {
+export const max = (maximum :number) => (value: any) :Validation => {
 
-  const valid = { hasError: false, validator: undefined };
-
-  const notRequired = required(value).hasError;
-  if(notRequired) return valid;
-
-  if(value > maximum) return {
-    hasError: true,
-    validator: "max",
+  if(maximum >= comparisonValue(value)) return {
+    isValid: true,
+    rule: undefined,
   }
 
-  return valid;
+  else return { isValid: false, rule: "max" };
   
 }

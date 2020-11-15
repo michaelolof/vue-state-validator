@@ -1,18 +1,15 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.matchLength = void 0;
-var required_1 = require("./required");
-exports.matchLength = function (length) { return function (value) {
-    var valid = { hasError: false, validator: undefined };
-    var notRequired = required_1.required(value).hasError;
-    if (notRequired)
-        return valid;
-    value = value + "";
-    if (value.length !== length)
+export const matchLength = (length) => (value) => {
+    const isOfLength = (val) => {
+        if (typeof val === "string")
+            val = val.trim();
+        const l = (Array.isArray(val) || typeof val === "string") ? val.length : (val + "").length;
+        return l === length;
+    };
+    if (isOfLength(value))
         return {
-            hasError: true,
-            validator: "matchLength",
+            isValid: true,
+            rule: undefined,
         };
-    return valid;
-}; };
-//# sourceMappingURL=matchLength.js.map
+    else
+        return { isValid: false, rule: "matchLength" };
+};
