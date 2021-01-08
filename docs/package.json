@@ -1,0 +1,19 @@
+{
+  "name": "vue-state-validator-docs",
+  "version": "0.0.1",
+  "description": "The official documentation for Vue State Validator",
+  "main": "index.js",
+  "authors": {
+    "name": "Michael Olofinjana",
+    "email": "myqrrlolof@yahoo.com"
+  },
+  "repository": " michaelolof/vue-state-validator",
+  "scripts": {
+    "dev": "vuepress dev src",
+    "build": "vuepress build src"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^1.5.3"
+  }
+}

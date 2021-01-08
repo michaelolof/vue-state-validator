@@ -1,98 +1,250 @@
-import { ValidatorOption, required, range, wordRange, matchLength, charRange, maxChar, minChar, minWord } from "../../src";
+import { ValidatorOption, required, range, wordRange, matchLength, charRange, maxChar, minChar, minWord, getErrors, ValidatorStateOption, alpha, numeric, max, validate, maxWord, min, validateAndMutate, getErrorsAndMutate } from "../../src";
 
 
 
-describe( "" + "()", () => {
+describe( "validate()", () => {  
   
-  it("Should return the errors found", () => {
+  it("Should pass validation and return true", () => {
 
-    // const data = {
-    //   balance: { value: 3000, currency: "NGN",  },
-    //   amount: { value: 50, currency: "NGN" },
-    //   beneficiary: { value: "John Doe", isShown: false },
-    //   accountNo: { value: 1222000  },
-    //   branchCode: { value: undefined }
-    // }
-    
-    // const options :ValidatorOption[] = [
-    //   { field: data.balance },
-    //   { field: data.amount, rules: [required, range(100, 100000)] },
-    //   { field: data.beneficiary, rules: [required, wordRange(2, 2)], validateIf: data.beneficiary.isShown },
-    //   { field: data.accountNo, rules: [required, matchLength(10)] },
-    //   { field: data.branchCode }
-    // ];
-  
-    // const errors = checkForErrors(options);
+    const firstname = "John", lastname = undefined, age = 24, bio = "John Doe is a fake name";
 
-  
-    // expect(errors.length).toBe(3);
-    // expect(errors[0].validator).toBe("range");
-    // expect(errors[0].isInvalid).toBe(true);
-    // expect(errors[1].validator).toBe("matchLength");
-    // expect(errors[1].isInvalid).toBe(true);
-    // expect(errors[2].validator).toBe("required");
-    // expect(errors[2].isEmpty).toBe(true);
+    const options = [
+      { value: firstname, rules: [required, alpha, maxWord(1), maxChar(10)] }, // --> Pass
+      { value: lastname, rules: [alpha, maxWord(1), maxChar(10)] }, // --> Pass
+      { value: age, rules: [required, numeric, min(18) ] }, // --> Pass
+      { value: bio, rules: [wordRange(3, 10), maxChar(120) ] }, // --> Pass
+    ]
+
+    const isValid = validate( options );
+
+    expect(isValid).toBe(true);
 
   })
 
 
-  it("Should return the errors in the correct order", () => {
-    
-    // const data = {
-    //   balance: { value: 3000, currency: "NGN",  },
-    //   amount: { value: 50, currency: "NGN" },
-    //   beneficiary: { value: "John Doe Max", isShown: true },
-    //   accountNo: { value: 1222000  },
-    //   branchCode: { value: undefined }
-    // }
-    
-    // const options :ValidatorOption[] = [
-    //   { field: data.balance, order: 1 },
-    //   { field: data.amount, rules: [required, range(100, 100000)], order: 3 },
-    //   { field: data.beneficiary, rules: [required, wordRange(2, 2)], validateIf: data.beneficiary.isShown, order: 4 },
-    //   { field: data.accountNo, rules: [required, matchLength(10)], order: 2 },
-    //   { field: data.branchCode, order: 5 }
-    // ];
+  it("Should fail validation and return false", () => {
 
-    // const errors = checkForErrors(options);
+    const firstname = "John", lastname = undefined, age = 24, bio = "John Doe is a fake name";
 
-    // expect(errors.length).toBe(4);
-    // expect(errors[0].validator).toBe("matchLength");
-    // expect(errors[0].isInvalid).toBe(true);
-    // expect(errors[1].validator).toBe("range");
-    // expect(errors[1].isInvalid).toBe(true);
-    // expect(errors[2].validator).toBe("wordRange");
-    // expect(errors[2].isInvalid).toBe(true);
-    // expect(errors[3].validator).toBe("required");
-    // expect(errors[3].isEmpty).toBe(true);
+    const options = [
+      { value: firstname, rules: [required, alpha, maxWord(1), maxChar(10)] }, // --> Pass
+      { value: lastname, rules: [alpha, maxWord(1), maxChar(10)] }, // --> Pass
+      { value: age, rules: [required, numeric, min(18) ] }, // --> Pass
+      { value: bio, rules: [wordRange(1, 4), maxChar(120) ] }, // --> Fail
+    ]
 
-  })
+    const isValid = validate( options );
 
-
-  it("Should adhrere strictly to the validation rules and the order in which they are defined", () => {
-    
-    // const data = {
-    //   optionalNameOne: { value: "" },
-    //   optionalNameTwo: { value: "M" },
-    //   fullname: { value: "Points Taken" },
-    // }
-    
-    // const options :ValidatorOption[] = [
-    //   { field: data.optionalNameOne, rules: [charRange(3, 15)] },
-    //   { field: data.optionalNameTwo, rules: [charRange(3, 15)], order: 3 },
-    //   { field: data.fullname, rules: [required, minChar(5), minWord(4), maxChar(200)], order: 3 },
-    // ];
-
-    // const errors = checkForErrors(options);
-
-    // expect(errors.length).toBe(2);
-    // expect(errors[0].isInvalid).toBe(true);
-    // expect(errors[0].validator).toBe("charRange");
-    // expect(errors[1].isInvalid).toBe(true);
-    // expect(errors[1].validator).toBe("minWord");
+    expect(isValid).toBe(false);
 
   })
 
 });
 
 
+describe( "validateAndMutate()", () => {
+
+  it("should pass validation and return true without any mutations", () => {
+
+    const name = { value: "John Doe" };
+    const nameClone = { ...name };
+    const age = { value: 28 };
+    const ageClone = { ...age };
+    const bio = { text: "John Doe is a fake person" }
+    const bioClone = { ...bio };
+
+    const options = [
+      { target: name, rules: [required, wordRange(2,2), maxChar(15)] },
+      { target: age, rules: [required, range(18,28)] },
+      { target: bio, property: "text", rules: [required, wordRange(3,10)] },
+    ];
+
+
+    const isValid = validateAndMutate(options);
+
+
+    expect(isValid).toBe(true);
+    expect(name).toEqual( nameClone );
+    expect(age).toEqual( ageClone );
+    expect(bio).toEqual( bioClone );
+
+  })
+
+  it("should fail validation and mutate the target object with respective error properties", () => {
+
+    const name = { value: "John" };
+    const nameClone = { ...name };
+    const age = { value: undefined };
+    const ageClone = { ...age };
+    const bio = { value: "John Doe is a fake person" }
+    const bioClone = { ...bio };
+
+    const options = [
+      { target: name, rules: [required, wordRange(2,2), maxChar(15)] },
+      { target: age, rules: [required, range(18,28)] },
+      { target: bio, rules: [wordRange(3,10)] },
+    ];
+
+
+    const isValid = validateAndMutate(options);
+
+
+    expect(isValid).toBe(false);
+
+    expect(name).not.toEqual( nameClone );
+    expect(name).toHaveProperty( "$isWrong", true )
+    expect(name).toHaveProperty( "$rule", "wordRange" );
+    
+    expect(age).not.toEqual( ageClone );
+    expect(age).toHaveProperty( "$isEmpty", true );
+    expect(age).toHaveProperty( "$rule", "required" );
+
+    expect(bio).toEqual( bioClone );
+
+  })
+
+
+})
+
+
+describe("getErrors()", () => {
+
+  it("should return an emmpty object with no validation errors", () => {
+
+    const firstname = "John", lastname = undefined, age = 24, bio = "John Doe is a fake name";
+
+    const options = {
+      firstname: { value: firstname, rules: [required, alpha, maxWord(1), maxChar(10)] }, // --> Pass
+      lastname: { value: lastname, rules: [alpha, maxWord(1), maxChar(10)] }, // --> Pass
+      age: { value: age, rules: [required, numeric, min(18) ] }, // --> Pass
+      bio: { value: bio, rules: [wordRange(3, 10), maxChar(120) ] }, // --> Pass
+    }
+
+    const errors = getErrors( options );
+
+    expect(errors).toEqual({});
+  
+  })
+
+
+  it("should return an object dictionary with the validation errors", () => {
+
+    const firstname = "John", lastname = undefined, age = 24, bio = "John Doe is a fake name";
+
+    const options = {
+      firstname: { value: firstname, rules: [required, alpha, maxWord(1), maxChar(10)] }, // --> Pass
+      lastname: { value: lastname, rules: [alpha, maxWord(1), maxChar(10)] }, // --> Pass
+      age: { value: age, rules: [required, numeric, min(18) ] }, // --> Pass
+      bio: { value: bio, rules: [wordRange(1, 4), maxChar(120) ] }, // --> Fail
+    }
+
+
+    const errors = getErrors( options );
+
+
+    expect(errors).toHaveProperty("bio");
+    expect(errors.bio).toEqual({ $isWrong: true, $rule: "wordRange" });
+
+  })
+
+})
+
+
+describe("getErrorsAndMutate", () => {
+
+  it("should pass validation and return true without any mutations", () => {
+
+    const name = { value: "John Doe" };
+    const nameClone = { ...name };
+    const age = { value: 28 };
+    const ageClone = { ...age };
+    const bio = { text: "John Doe is a fake person" }
+    const bioClone = { ...bio };
+
+    const options = {
+      name: { target: name, rules: [required, wordRange(2,2), maxChar(15)] },
+      age: { target: age, rules: [required, range(18,28)] },
+      bio: { target: bio, property: "text", rules: [required, wordRange(3,10)] },
+    };
+
+
+    const errors = getErrorsAndMutate(options);
+
+
+    expect(errors).toEqual({});
+    expect(name).toEqual( nameClone );
+    expect(age).toEqual( ageClone );
+    expect(bio).toEqual( bioClone );
+
+  })
+
+  it("should fail validation and mutate the target object with respective error properties", () => {
+
+    const name = { value: "John" };
+    const nameClone = { ...name };
+    const age = { value: undefined };
+    const ageClone = { ...age };
+    const bio = { value: "John Doe is a fake person" }
+    const bioClone = { ...bio };
+
+    const options = {
+      name: { target: name, rules: [required, wordRange(2,2), maxChar(15)] },
+      age: { target: age, rules: [required, range(18,28)] },
+      bio: { target: bio, rules: [wordRange(3,10)] },
+    };
+
+
+    const errors = getErrorsAndMutate(options);
+
+    
+    expect(errors).toHaveProperty("name");
+    expect(errors.name).toEqual({ $isWrong: true, $rule: "wordRange" });
+    expect(name).not.toEqual( nameClone );
+    expect(name).toHaveProperty( "$isWrong", true )
+    expect(name).toHaveProperty( "$rule", "wordRange" );
+    
+    expect(errors).toHaveProperty("age");
+    expect(errors.age).toEqual({ $isEmpty: true, $rule: "required" });
+    expect(age).not.toEqual( ageClone );
+    expect(age).toHaveProperty( "$isEmpty", true );
+    expect(age).toHaveProperty( "$rule", "required" );
+
+    expect(bio).toEqual( bioClone );
+
+  })
+
+
+})
+
+// describe("getValidationState()", () => {
+
+//   it("Should return the validation state", () => {
+
+//     const options :ValidatorStateOption[] = [
+//       { name: "fullname", value: "Josh", rules: [ required, alpha, wordRange(2,2), maxChar(15) ] },
+//       { name: "age", value: 202, rules: [ required, numeric, max(55) ] },
+//       { name: "amount", value: "", rules: [ required, numeric, range(10, 200) ] },
+//       { name: "description", value: "Bop bop baby", rules: [wordRange(3, 10)] }
+//     ]
+
+//     const vs = getValidationState(options);
+
+//     expect( vs.fullname ).toHaveProperty("$isWrong", true );
+//     expect( vs.fullname ).toHaveProperty("$isEmpty", undefined );
+//     expect( vs.fullname ).toHaveProperty("$rule", "wordRange" );
+    
+//     expect( vs.age ).toHaveProperty("$isWrong", true );
+//     expect( vs.age ).toHaveProperty("$isEmpty", undefined );
+//     expect( vs.age ).toHaveProperty("$rule", "max" );
+
+//     expect( vs.amount ).toHaveProperty("$isWrong", undefined );
+//     expect( vs.amount ).toHaveProperty("$isEmpty", true );
+//     expect( vs.amount ).toHaveProperty("$rule", "required" );
+
+//     expect( vs.description ).toHaveProperty("$isWrong", undefined );
+//     expect( vs.description ).toHaveProperty("$isEmpty", undefined );
+//     expect( vs.description ).toHaveProperty("$rule", undefined );
+
+//   })
+
+// })

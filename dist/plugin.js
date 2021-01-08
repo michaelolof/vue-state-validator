@@ -1,6 +1,6 @@
-import { validateAndMutate, validateValue } from "./validators";
-import { alpha, alphaNumeric, integer, max, numeric, maxChar } from "./rules";
-import { constants, isControlKey } from "./utils";
+import { invalidateMutatedField, validateAndMutate, validateValue } from "./validators";
+import { alpha, alphaNumeric, integer, max, numeric, maxChar, match } from "./rules";
+import { constants, isControlKey, toRegex } from "./utils";
 const handlers = {
     validateOn: {
         validationHandler: "___vueLiteValidatorValidateOnValidationHandler___",
@@ -16,7 +16,10 @@ const validateOn = {
         const events = Object.keys(binding.modifiers || {});
         const validationEvent = events[0] || "blur";
         const inValidateEvent = events[1];
-        const rule = binding.value || { field: { value: undefined } };
+        let option = binding.value || { target: { value: undefined } };
+        if (Array.isArray(option)) {
+            option = { target: option[0], rules: option[1], property: option[2] };
+        }
         el.addEventListener(validationEvent, validationHandler);
         el[handlers.validateOn.validationHandler] = validationHandler;
         if (inValidateEvent) {
@@ -31,17 +34,15 @@ const validateOn = {
              */
             if (validationEvent === "input") {
                 setTimeout(() => {
-                    validateAndMutate([rule]);
+                    validateAndMutate([option]);
                 }, 1500);
             }
             else
-                validateAndMutate([rule]);
+                validateAndMutate([option]);
         }
         function invalidationHandler(evt) {
             evt.stopPropagation();
-            rule.field.isEmpty = false;
-            rule.field.isInvalid = false;
-            rule.field.validator = undefined;
+            invalidateMutatedField(option.target);
         }
     },
     unbind(el, binding) {
@@ -106,7 +107,11 @@ const validateMax = {
             if (isControlKey(evt))
                 return;
             if (max(maximum)(evt.target.value).isValid === false) {
-                evt.target.value = maximum;
+                evt.preventDefault();
+                const event = document.createEvent("Event");
+                event.initEvent("input", true, true);
+                el.value = maximum;
+                el.dispatchEvent(event);
             }
         }
     },
@@ -144,6 +149,10 @@ function buildRulesFromBinding(binding) {
         rules.push(alphaNumeric);
     if (binding.modifiers["integer"])
         rules.push(integer);
+    if (binding.modifiers["match"]) {
+        const compare = toRegex(binding.expression) || binding.expression;
+        rules.push(match(compare));
+    }
     return rules;
 }
 function numericChar(value) {
@@ -159,10 +168,10 @@ function numericChar(value) {
 export default {
     install(Vue) {
         constants.Vue = Vue;
-        Vue.directive("validate-on", validateOn);
-        Vue.directive("validate-prevent", validatePrevent);
-        Vue.directive("validate-allow", validateAllow);
-        Vue.directive("validate-max", validateMax);
-        Vue.directive("validate-length", validateLength);
+        Vue.directive("vsv-on", validateOn);
+        Vue.directive("vsv-prevent", validatePrevent);
+        Vue.directive("vsv-allow", validateAllow);
+        Vue.directive("vsv-max", validateMax);
+        Vue.directive("vsv-length", validateLength);
     },
 };

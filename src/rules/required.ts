@@ -1,3 +1,4 @@
+import { objectIsEmpty } from "../utils";
 import { Validation } from "./index";
 
 
@@ -17,9 +18,4 @@ export const isEmpty = (value :any) => {
 
   else return false;
 
-}
-
-
-function objectIsEmpty(obj :any) { 
-  return (Object.keys(obj).length === 0 && obj.constructor === Object)
 }

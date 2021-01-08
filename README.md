@@ -1,8 +1,9 @@
 # VueStateValidator
 
-> A simple customizable validator engine for Vue
-<br>
+A simple customizable validator engine for Vue.
 
+See detailed documentation at https://www.vuestatevalidator.michaelolof.com
+<br><br><br>
 ## Installation
 ```sh
 ## Install Module
@@ -53,9 +54,9 @@ import { required, charRange, wordRange, integer, range, numeric, min, max, vali
        *  - Amount is required must be a number, and must be between 100 and 100,000
        */
       const options = [
-        { field: this.fullname, rules: this.fullname.rules },
-        { field: this.age, rules: this.age.rules },
-        { field: this.amount, rules: this.amount.rules }
+        { target: this.fullname, rules: this.fullname.rules },
+        { target: this.age, rules: this.age.rules },
+        { target: this.amount, rules: this.amount.rules }
       ]
 
       const isValid = validateAndMutate(options);
@@ -75,27 +76,27 @@ This will result in a data object that looks like this:
     return {
       fullname: { 
         value: "John Doe Josh", 
-        $isEmpty: false, 
-        $isInvalid: true, 
+        rules: [required, charRange(3, 25), wordRange(2,2)],
+        $isWrong: true, 
         $rule: "wordRange" 
       },
       age: {
         value: 50,
-        $isEmpty: false,
-        $isInvalid: true,
+        rules: [required, charRange(3, 25), wordRange(2,2)],
+        $isWrong: true,
         $rule: "range"
       }
       amount: {
         value: undefined,
+        rules: [required, numeric, min(100), max(100_000)],
         $isEmpty: true,
-        $isInvalid: false,
         $rule: "required"
       }
     }
   }
 }
 ```
-You would notice three properties `$isEmpty` `$isInvalid` and `$rule` on the object being validated.
+You would notice three properties `$isEmpty` `$isWrong` and `$rule` on the object being validated.
 \
 VueStateValidator at its core assumes that validation errors can only ever be **empty or wrong.** This means a validation can either fail because the client didn't enter a value, or the client entered a wrong value. 
 We also recognize the need to give detailed error messages which provide context to where the failure occured - this is the information the `$rule` field gives to us. It lets us know which rule caused validation failure. 
@@ -104,124 +105,14 @@ If the validation is successfull, `$rule` is `undefined`
 In your HTML, you'd do some thing like this to display the errors.
 ```html
 <span v-if="amount.$isEmpty" class="error">Please enter an amount</span>
-<span v-else-if="amount.$isInvalid && amount.$rule === 'min'" class="error">Minimum amount is 100</span>
-<span v-else-if="amount.$isInvalid && amount.$rule === 'max'" class="error">Maximum amount is 100,000</span>
-<span v-else-if="amount.$isInvalid">Please enter a valid amount</span>
+<span v-else-if="amount.$isWrong && amount.$rule === 'min'" class="error">Minimum amount is 100</span>
+<span v-else-if="amount.$isWrong && amount.$rule === 'max'" class="error">Maximum amount is 100,000</span>
+<span v-else-if="amount.$isWrong">Please enter a valid amount</span>
 ```
 
 <br>
 
-## Writing a Custom Validation Rule
-A validation rule is simply function that takes a single value as a parameter and returns a `Validation` object.
-```js
-function greaterThan5(value) {
 
-  if(value > 5) {
-    return { isValid: true, rule: undefined }
-  }
-
-  else return { isValid: false, rule: "greaterThan5" }
-
-}
-```
-That's it! You're done. 
-You've written your own custom rule that can be passed into the rules array for validation just like the built in ones.
-<br>
-
-
-## Helper Directives
-This library also comes with a couple of helper directives to simplify common validation problems
-
-##### *v-validate-on.[validateModifier].[invalidateModifier]="[ValidationOption]"*
-```html
-  <input v-model="fullname.value" v-validate-on.blur.focus="{ field: fullname, rules: fullname.rules }">
-```
-This will attach a blur and focus event on the input element. It will **validate** the field defined using the rules passed on `blur` and invalidate the fields on `focus`
-Both the validate and invalidate modifiers are optional.
-The default validate modifier is `blur`. The invalidate modifier has no default.
-
-##### *v-validate-prevent.[ruleModifier]*
-```html
-<input v-model="age.value" v-validate-prevent.alpha />
-```
-This will prevent all alphabetic characters from your input element
-Allowed modifiers are: `alpha`, `numeric`, `alphaNumeric` and `integer`
-
-##### *v-validate-allow.[ruleModifier]*
-```html
-<input v-model="age.value" v-validate-prevent.number />
-```
-This will allow only numeric characters in your input element
-Allowed modifiers are: `alpha`, `numeric`, `alphaNumeric` and `integer`
-
-##### *v-validate-max="[maxSize]"*
-```html
-<input v-model="amount.value" v-validate-max="100000" />
-```
-This will place a maximum limit of 100,000 on the value of your input element
-
-##### *v-validate-length="[maxSize]"*
-```html
-<input v-model="fullname.value" v-validate-length="20" />
-```
-This will place a maximum limit of 20 on the length of characters of your input element
-<br>
-
-## API TYPES
-
-##### *Valdation*
-A simple object that defines the result of a validation rule.
-```ts
-{
-  isValid: boolean
-  rule: string | undefined // The name of the function rule
-}
-```
-
-##### *Rule*
-A unit function that defines that defines how a value is validated.
-It takes a `value` as the only argument and returns a `Validation` object.
-```ts
-(value :any) => Validation
-```
-
-##### *ValidationOption*
-An object that holds information about the field to be validated
-```ts
-{
-  field: object,
-  rules?: Rule[] // optional. Defaults to [required]
-  validateIf?: boolean //optional. Defaults to true
-  value?: string // optional. Defaults to "value"
-  order?: number //optional. Defaults to the array index
-}
-```
-**`field`** : represents the object that holds the value you want to validate. The field object has a `value` property by default which is to be validated against. Validation is done by attaching an `$isEmpty`, `$isInvalid` and `$rule` property to this object. 
-
-**`rules`** : This is just an array of `Rule` functions. It is optional. If not passed it will default to an array with 1 `required` rule.
-
-**`validateIf`** : This tells the validator to skip validation if this value is false. It is useful when you want to validate dynamically (only when some conditions are met). It is optional. if not passed will default to `true`
-
-**`value`** : This allows you to set the name of the property which is to be validated in your `field` object. It is optional. If not passed will default to `"value"` 
-
-**`order`** : Here you can define the order in which to run your validation. Useful when you want to get validation errors based in a particular order. It is optional. if not passed will default to the array index.
-<br>
-
-
-## Validators
-
-##### *`validate(options: ValidatorOption[]) : boolean`*
-Takes an array of `ValidatorOption` and returns true if valid, false if invalid.
-<br>
-##### *`validateAndMutate(options :ValidatorOption[]) : boolean`*
-Takes an array of `ValidatorOption` and returns true if valid and mutates the field object with `$isEmpty` `$isInvalid` `$rule` properties.
-<br>
-##### *`getErrors(options: ValidatorOption[]) : [Field]`*
-Takes an array of `ValidatorOption` and returns an array of fields that failed validation.
-<br>
-##### *`getErrorsAndMutate(options :ValidatorOption[]) : [Field]`*
-Takes an array of `ValidatorOption` and returns an array of fields that failed validation and also mutates the field object with `$isEmpty` `$isInvalid` `$rule` properties.
-<br>
 
 
 ## Built-in Rules

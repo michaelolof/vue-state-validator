@@ -22,6 +22,44 @@ export function set(target :any, key :string, value :any) {
 }
 
 
+export function unset(target :any, key :string) {
+
+  if(!objectHasProperty(target, key)) return
+  
+  if(constants.Vue) {
+    constants.Vue.delete(target, key);
+  }
+  else {
+    delete target[ key ];
+  }
+}
+
+
+
+export function toRegex(val :any) {
+  try {
+    const flags = val.replace(/.*\/([gimy]*)$/, '$1');
+    const pattern = val.replace(new RegExp('^/(.*?)/'+flags+'$'), '$1');
+    return new RegExp(pattern, flags);
+  }
+  catch {
+    return undefined;
+  }
+}
+
+
+export function objectIsEmpty(obj :any) { 
+  return (Object.keys(obj).length === 0 && obj.constructor === Object)
+}
+
+
+export function objectHasProperty(obj :any, prop :string) {
+  if(obj === undefined || obj === null) return false;
+  const proto = obj.__proto__ || obj.constructor.prototype;
+  return (prop in obj) && (!(prop in proto) || proto[prop] !== obj[prop]);
+}
+
+
 export const constants = {
   Vue: undefined as VueObj | undefined
 }
@@ -29,4 +67,5 @@ export const constants = {
 
 interface VueObj {
   set(target :any, key :string, value :any) :void
+  delete(target :any, key :string) :void
 }

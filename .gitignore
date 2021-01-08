@@ -1,3 +1,4 @@
 .git
 node_modules
 tests/web/node_modules
+docs/node_modules

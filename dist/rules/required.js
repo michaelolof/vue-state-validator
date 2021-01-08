@@ -1,3 +1,4 @@
+import { objectIsEmpty } from "../utils";
 export function required(value) {
     if (isEmpty(value) || value == "0")
         return { isValid: false, rule: "required" };
@@ -13,6 +14,3 @@ export const isEmpty = (value) => {
     else
         return false;
 };
-function objectIsEmpty(obj) {
-    return (Object.keys(obj).length === 0 && obj.constructor === Object);
-}

@@ -1,6 +1,6 @@
 {
   "name": "vue-state-validator",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A simple customizable validator engine for Vue",
   "main": "dist/index.js",
   "scripts": {
@@ -9,7 +9,9 @@
     "test": "./node_modules/.bin/jest",
     "test:watch": "./node_modules/.bin/jest --watch",
     "test:coverage": "./node_modules/.bin/jest --coverage",
-    "test:web": "cd tests/web && npm run serve && cd ../../"
+    "test:web": "cd tests/web && npm run serve && cd ../../",
+    "docs": "cd docs && npm run dev && cd ../",
+    "docs:build": "cd docs && npm run build && cd ../"
   },
   "keywords": [
     "Vue",

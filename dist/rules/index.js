@@ -19,7 +19,7 @@ export { minWord } from "./minWord";
 export { notContain } from "./notContain";
 export { numeric } from "./numeric";
 export { range } from "./range";
-export { required } from "./required";
+export { required, isEmpty } from "./required";
 export { url } from "./url";
 export { wordRange } from "./wordRange";
 export const comparisonValue = (val) => {

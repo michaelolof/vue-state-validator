@@ -1,6 +1,6 @@
-import { validateAndMutate, validateValue } from "./validators";
-import { alpha, alphaNumeric, integer, max, numeric, Rule, Validation, maxChar } from "./rules";
-import { constants, isControlKey } from "./utils";
+import { invalidateMutatedField, validateAndMutate, validateFieldAndMutate, validateValue } from "./validators";
+import { alpha, alphaNumeric, integer, max, numeric, Rule, Validation, maxChar, match } from "./rules";
+import { constants, isControlKey, toRegex } from "./utils";
 
 
 
@@ -23,8 +23,11 @@ const validateOn = {
     const events = Object.keys(binding.modifiers || {}); 
     const validationEvent = events[ 0 ] || "blur";
     const inValidateEvent = events[ 1 ];
-    const rule = binding.value || { field: { value: undefined } }
+    let option = binding.value || { target: { value: undefined } }
 
+    if(Array.isArray(option)) {
+      option = { target: option[0], rules: option[1], property: option[2] }
+    }
     
     el.addEventListener(validationEvent, validationHandler);
     el[handlers.validateOn.validationHandler] = validationHandler;
@@ -42,17 +45,15 @@ const validateOn = {
        */
       if(validationEvent === "input") {
         setTimeout(() => {
-          validateAndMutate([rule]);
+          validateAndMutate([option]);
         }, 1500)
       }
-      else validateAndMutate([rule]);
+      else validateAndMutate([ option ]);
     }
 
     function invalidationHandler(evt: any) {
       evt.stopPropagation();
-      rule.field.isEmpty = false;
-      rule.field.isInvalid = false;
-      rule.field.validator = undefined;
+      invalidateMutatedField(option.target);
     }
 
   },
@@ -145,9 +146,13 @@ const validateMax = {
     //-------------------------------------------------------
     function validateMaxHandler(evt :any) {
       if(isControlKey(evt)) return;
-
-      if(max(maximum)(evt.target.value).isValid === false) { 
-        evt.target.value = maximum;
+      
+      if(max(maximum)(evt.target.value).isValid === false) {
+        evt.preventDefault();
+        const event = document.createEvent("Event");
+        event.initEvent("input", true, true);
+        el.value = maximum;
+        el.dispatchEvent(event);
       }
     }
 
@@ -191,12 +196,17 @@ const validateLength = {
 
 
 function buildRulesFromBinding(binding :any) {
+
   const rules :Rule[] = [];
 
   if(binding.modifiers["alpha"]) rules.push(alpha)
   if(binding.modifiers["numeric"]) rules.push(numericChar);
   if(binding.modifiers["alphaNumeric"]) rules.push(alphaNumeric);
   if(binding.modifiers["integer"]) rules.push(integer);
+  if(binding.modifiers["match"]) {
+    const compare = toRegex(binding.expression) || binding.expression;
+    rules.push(match(compare))
+  }
 
   return rules;
 }
@@ -216,11 +226,11 @@ export default {
 
   install(Vue :any) {
     constants.Vue = Vue;
-    Vue.directive("validate-on", validateOn )
-    Vue.directive("validate-prevent", validatePrevent )
-    Vue.directive("validate-allow", validateAllow )
-    Vue.directive("validate-max", validateMax )
-    Vue.directive("validate-length", validateLength )
+    Vue.directive("vsv-on", validateOn )
+    Vue.directive("vsv-prevent", validatePrevent )
+    Vue.directive("vsv-allow", validateAllow )
+    Vue.directive("vsv-max", validateMax )
+    Vue.directive("vsv-length", validateLength )
   },
 
   // validateOn,
