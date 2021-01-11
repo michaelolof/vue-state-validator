@@ -21,6 +21,7 @@ module.exports = {
     ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }]
   ],
 
+
   /**
    * Theme configuration, here is the default theme configuration for VuePress.
    *
@@ -45,37 +46,37 @@ module.exports = {
     sidebar: [
       {
         title: 'Overview',
-        path: '/overview',
+        path: './overview.html',
         collapsable: false,
       },
       {
         title: 'Installation',
-        path: '/installation',
+        path: './installation.html',
         collapsable: false,
       },
       {
         title: 'Basic Principles',
-        path: '/basic-principles',
+        path: './basic-principles',
         collapsable: false,
       },
       {
         title: 'Api Types',
-        path: '/api-types',
+        path: './api-types',
         collapsable: false,
       },
       {
         title: 'Validators',
-        path: '/validators',
+        path: './validators',
         collapsable: false,
       },
       {
         title: 'Validation Rules',
-        path: '/rules/',
+        path: './rules/',
         collapsable: false,
       },
       {
         title: 'Helper Directives',
-        path: '/helper-directives',
+        path: './helper-directives',
         collapsable: false,
       }
     ]
@@ -85,7 +86,8 @@ module.exports = {
    * Apply plugins，ref：https://v1.vuepress.vuejs.org/zh/plugin/
    */
   plugins: [
-    '@vuepress/plugin-back-to-top',
-    '@vuepress/plugin-medium-zoom',
+    // '@vuepress/plugin-back-to-top',
+    // '@vuepress/plugin-medium-zoom'
+    'michaelolof-vuepress-plugin-ipfs',
   ]
 }

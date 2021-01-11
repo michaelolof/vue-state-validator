@@ -7,7 +7,7 @@
     "name": "Michael Olofinjana",
     "email": "myqrrlolof@yahoo.com"
   },
-  "repository": " michaelolof/vue-state-validator",
+  "repository": "michaelolof/vue-state-validator",
   "scripts": {
     "dev": "vuepress dev src",
     "build": "vuepress build src"
@@ -15,5 +15,8 @@
   "license": "MIT",
   "devDependencies": {
     "vuepress": "^1.5.3"
+  },
+  "dependencies": {
+    "michaelolof-vuepress-plugin-ipfs": "^1.0.3"
   }
 }

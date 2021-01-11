@@ -2,7 +2,7 @@
 
 A simple customizable validator engine for Vue.
 
-See detailed documentation at https://www.vuestatevalidator.michaelolof.com
+See detailed documentation at http://michaelolof.com/docs/vue-state-validator
 <br><br><br>
 ## Installation
 ```sh
