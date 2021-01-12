@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+
+# These script is used for automating deployment of the docs folder to a
+# local server in another repo.
+
+
+
 # Define Variables. (YOU CAN CHANGE THESE)
 #-----------------------------------------------------------
 DIST_PROJECT_NAME="vue-state-validator"

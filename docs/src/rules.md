@@ -46,12 +46,14 @@ Custom Validation rules are really no different from built in rules. They are al
 For example. You could write a custom validator that checks if a value is an alphabet.
 
 ```js
-function alphabet(value) {  
-  if(/^[A-Za-z]+$/.test(value)) {
-    return { isValid: true, rule: "alphabet" }
+function alphabet(value) { 
+  const isValid = /^[A-Za-z]+$/.test(value); 
+  
+  if(isValid) { 
+    return { isValid, rule: undefined } // No need to return rule here.
   }
   else { 
-    return { isValid: false, rule: "alphabet" }
+    return { isValid, rule: "alphabet" } // Need to return rule when it is invalid.
   }
 }
 ```

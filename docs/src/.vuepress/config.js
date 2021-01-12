@@ -71,7 +71,7 @@ module.exports = {
       },
       {
         title: 'Validation Rules',
-        path: './rules/',
+        path: './rules',
         collapsable: false,
       },
       {
@@ -86,8 +86,8 @@ module.exports = {
    * Apply plugins，ref：https://v1.vuepress.vuejs.org/zh/plugin/
    */
   plugins: [
-    // '@vuepress/plugin-back-to-top',
-    // '@vuepress/plugin-medium-zoom'
-    'michaelolof-vuepress-plugin-ipfs',
+    '@vuepress/plugin-back-to-top',
+    '@vuepress/plugin-medium-zoom',
+    require("michaelolof-vuepress-plugin-ipfs"),
   ]
 }
