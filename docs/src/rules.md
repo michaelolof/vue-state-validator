@@ -22,7 +22,7 @@ This library ships with a bunch of built in validation rules.
 | `integer`                   | `integer(12)`                       | Checks if value is an integer      |
 | `ipAddress`                 | `ipAddress("127.0.0.1")`            | Checks if value is an IP address      |
 | `macAddress`                | `macAddress("xx:xa:xx:xx:xx:xx")`   | Checks if value is a MAC address      |
-| `match(string)`             | `match(/[a-zA-Z]+/)("One")`         | Checks if value is matched      |
+| `match(RegexExp)`           | `match(/[a-zA-Z]+/)("One")`         | Checks if value is matched using a regular expression   |
 | `matchLength(number)`       | `matchLength(3)("One")`             | Checks if length of string is matched      |
 | `max(number)`               | `max(10)(4)`                        | Checks if value is <= maximum      |
 | `maxChar(number)`           | `maxChar(10)("One")`                | Checks if length of value is <= maximum      |

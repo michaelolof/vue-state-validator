@@ -10,7 +10,7 @@
 
       <div class="form__group">
         <label for="fullname" class="form__label">Enter your fullname</label>
-        <input v-model="fullname.value" name="fullname" v-vsv-length="20" v-vsv-prevent.numeric class="form__input" type="text" placeholder="Firstname Lastname" autocomplete="off" />
+        <input v-model="fullname.value" name="fullname" v-vsv-length="20" v-vsv-allow.alpha class="form__input" type="text" placeholder="Firstname Lastname" autocomplete="off" />
         <span v-if="fullname.$isEmpty" class="text-error">Please enter a full name</span>
         <span v-else-if="fullname.$isWrong" class="text-error">Please enter a first name and last name</span>
       </div>

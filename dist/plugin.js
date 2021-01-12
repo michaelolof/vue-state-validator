@@ -7,7 +7,9 @@ const handlers = {
         invalidationHandler: "___vueLiteValidatorValidateOnInvalidationHandler___"
     },
     validatePreventHandler: "___vueLiteValidatorValidatePreventHandler",
+    onPasteValidatePreventHandler: "___vueLiteValidatorOnPasteValidatePreventHandler",
     validateAllowHandler: "___vueLiteValidatorValidateAllowHandler___",
+    onPasteValidateAllowHandler: "___vueLiteValidatorOnPasteValidateAllowHandler___",
     validateMaxHandler: "___vueLiteValidatorValidateMaxHandler___",
     validateLengthHandler: "___vueLiteValidatorValidateLengthHandler___"
 };
@@ -61,7 +63,9 @@ const validatePrevent = {
     bind(el, binding) {
         const rules = buildRulesFromBinding(binding);
         el.addEventListener("keydown", validatePreventHandler);
+        el.addEventListener("paste", onPasteValidatePreventHandler);
         el[handlers.validatePreventHandler] = validatePreventHandler;
+        el[handlers.onPasteValidatePreventHandler] = onPasteValidatePreventHandler;
         //---------------------------------------------------------
         function validatePreventHandler(evt) {
             if (isControlKey(evt))
@@ -71,17 +75,28 @@ const validatePrevent = {
             if ((value + "").length && isValid)
                 evt.preventDefault();
         }
+        function onPasteValidatePreventHandler(evt) {
+            //@ts-ignore
+            const value = (evt.clipboardData || window.clipboardData).getData('text');
+            const isValid = validateValue(value, rules);
+            if ((value + "").length && isValid)
+                evt.preventDefault();
+        }
     },
     unbind(el) {
         const validatePreventHandler = el[handlers.validatePreventHandler];
+        const onPasteValidatePreventHandler = el[handlers.onPasteValidatePreventHandler];
         el.removeEventListener("keydown", validatePreventHandler);
+        el.removeEventListener("paste", onPasteValidatePreventHandler);
     }
 };
 const validateAllow = {
     bind(el, binding) {
         const rules = buildRulesFromBinding(binding);
         el.addEventListener("keydown", validateAllowHandler);
+        el.addEventListener("paste", onPasteValidateAllowHandler);
         el[handlers.validateAllowHandler] = validateAllowHandler;
+        el[handlers.onPasteValidateAllowHandler] = onPasteValidateAllowHandler;
         //-------------------------------------------------------
         function validateAllowHandler(evt) {
             if (isControlKey(evt))
@@ -91,10 +106,19 @@ const validateAllow = {
             if ((value + "").length && isNotValid)
                 evt.preventDefault();
         }
+        function onPasteValidateAllowHandler(evt) {
+            //@ts-ignore
+            const value = (evt.clipboardData || window.clipboardData).getData('text');
+            const isNotValid = validateValue(value, rules) === false;
+            if ((value + "").length && isNotValid)
+                evt.preventDefault();
+        }
     },
     unbind(el) {
         const validateAllowHandler = el[handlers.validateAllowHandler];
+        const onPasteValidateAllowHandler = el[handlers.onPasteValidateAllowHandler];
         el.removeEventListener("keydown", validateAllowHandler);
+        el.removeEventListener("paste", onPasteValidateAllowHandler);
     }
 };
 const validateMax = {
@@ -157,7 +181,7 @@ function buildRulesFromBinding(binding) {
 }
 function numericChar(value) {
     value = (value + "").trim();
-    if ((value == ".") || numeric(value).isValid)
+    if ((value === ".") || numeric(value).isValid)
         return {
             isValid: true,
             rule: undefined

@@ -22,6 +22,7 @@ describe("rules.numeric()", () => {
 
   it("Should return an invalid object for non-numbers", () => {
 
+    expect(numeric("One1")).toEqual(invalidReturn);
     expect(numeric("M")).toEqual(invalidReturn);
     expect(numeric("JOHN")).toEqual(invalidReturn);
     expect(numeric("Doe")).toEqual(invalidReturn);
