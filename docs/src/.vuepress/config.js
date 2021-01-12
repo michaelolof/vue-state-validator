@@ -78,6 +78,11 @@ module.exports = {
         title: 'Helper Directives',
         path: './helper-directives',
         collapsable: false,
+      },
+      {
+        title: 'Demo',
+        path: './demo',
+        collapsable: false,
       }
     ]
   },
