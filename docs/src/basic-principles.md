@@ -11,8 +11,8 @@ These 2 fields will be attached if validation fails when you call the `validateA
 Only 1 of `$isEmpty` or `$isWrong` field will be attached at a time.
 <br><br>
 The last field which will always be attached if validation fails is the `$rule` field. \
-The `$rule` field simply says which rule failed validation.
-This allows us narrow down where our validation failed for more streamlined reporting.
+The `$rule` field defines which rule failed validation.
+This allow us narrow down where our validation failed for more streamlined reporting.
 
 <br><br>
 Take a look. Our ealier example can be extended to look like this:

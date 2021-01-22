@@ -17,7 +17,7 @@
 
       <div class="form__group">
         <label for="age" class="form__label">Bank</label>
-        <select v-model="bank.value" class="form__input">
+        <select v-model="bank.value" v-vsv-on.change.change="{ target: bank, rules: bank.rules }" class="form__input">
           <option :value="undefined">Select a bank</option>
           <option v-for="(bank, n) in banks" :key="n" :value="bank">{{ bank.name }}</option>
         </select>

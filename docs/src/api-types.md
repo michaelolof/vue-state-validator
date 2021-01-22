@@ -1,17 +1,20 @@
 # API Types
- This are the
+The library has specifications on how to interface with it.\
+Use the following as a reference when interacting with the library.
 
 ## Rule
 A rule is a unary function that defines how a value is to be validated. It takes `value` as the only argument and returns a `Validation` object. \
-A rule a type signature as follows:
+The type signature of a `Rule` looks like this:
 ```ts
   type Rule = (value :any) => Validation
 ```
+It takes one parameter of any type and returns a `Validation` object.
+
 Example
 ```js
 function numeric(value :number) {
   if(!isNaN(number)) {
-    return { isValid: true, rule: "numeric" }
+    return { isValid: true, rule: undefined }
   }
   else return { isValid: false, rule: "numeric" }
 }
@@ -29,8 +32,9 @@ type Validation = {
   rule: string;
 }
 ```
-`isValid` tells you whether the value passed the validation rule. `rule` defines what rule you're validating. \
-A rule of thumb is to return the name of the rule function itself.
+`isValid` tells you whether the value passed validation. \
+`rule` defines what rule you're validating. \
+It is best advised to pass the name of the rule function as the rule as shown in the `Rule` example above.
 <br><br>
 
 
@@ -52,7 +56,7 @@ type ValidationOption = {
 
 
 ## MutatingValidationOption
-An object that holds information about the field to be validated
+An object that holds information about the field to be validated. Used when calling mutating validators.
 ```ts
 type MutatingValidationOption = {
   target?: object, // An object with the value to be validated. Used for mutating validators

@@ -20,7 +20,7 @@ const handlers = {
 
 const validateOn = {
 
-  bind(el: any, binding :any) {
+  update(el: any, binding :any) {
         
     const events = Object.keys(binding.modifiers || {}); 
     const validationEvent = events[ 0 ] || "blur";
@@ -28,7 +28,7 @@ const validateOn = {
     let option = binding.value || { target: { value: undefined } }
 
     if(Array.isArray(option)) {
-      option = { target: option[0], rules: option[1], property: option[2] }
+      option = { target: option[0], rules: option[1], property: option[2], validateIf: option[3] }
     }
     
     el.addEventListener(validationEvent, validationHandler);
@@ -81,7 +81,7 @@ const validateOn = {
 
 const validatePrevent = {
 
-  bind(el :any, binding :any) {
+  update(el :any, binding :any) {
 
     const rules = buildRulesFromBinding(binding);
     el.addEventListener("keydown", validatePreventHandler);
@@ -120,7 +120,7 @@ const validatePrevent = {
 
 const validateAllow = {
 
-  bind(el :any, binding :any) {
+  update(el :any, binding :any) {
 
     const rules = buildRulesFromBinding(binding);
     el.addEventListener("keydown", validateAllowHandler);
@@ -159,7 +159,7 @@ const validateAllow = {
 
 const validateMax = {
   
-  bind(el :any, binding :any) {
+  update(el :any, binding :any) {
 
     const maximum = binding.value;
     el.addEventListener("keyup", validateMaxHandler)
@@ -191,7 +191,7 @@ const validateMax = {
 
 const validateLength = {
   
-  bind(el :any, binding :any) {
+  update(el :any, binding :any) {
 
     const maximum = binding.value;
     el.addEventListener("keydown", validateLengthHandler)
@@ -226,7 +226,7 @@ function buildRulesFromBinding(binding :any) {
   if(binding.modifiers["alphaNumeric"]) rules.push(alphaNumeric);
   if(binding.modifiers["integer"]) rules.push(integer);
   if(binding.modifiers["match"]) {
-    const compare = toRegex(binding.expression) || binding.expression;
+    const compare = toRegex(binding.value) || binding.value;
     rules.push(match(compare))
   }
 

@@ -9,6 +9,7 @@ VueStateValidator is a **simple** yet **flexible** validation and forms library 
     <label for="name">Enter your name</label>
     <input name="name" v-model="fullname.value" />
     <span v-if="fullname.$isEmpty">Please enter your fullname.</span>
+    <span v-else-if="fullname.$isWrong && fullname.$rule === 'charRange'">Please enter a name between 3 to 20 characters.</span>
     <span v-else-if="fullname.$isWrong">Please enter a valid fullname.</span>
 
     <button @click="submit" type="submit">Save</button>
@@ -42,9 +43,9 @@ export default {
 </script>
 ```
 
-Here we've declared that fullname must be **required, just 2 words and between 3 to 20 characters.**
+Here we've declared that fullname must be **required, just 2 words and between 3 to 20 characters.** We do this by passing an array of rules that define how the `target` value is to be validated.
 <br><br>
-When the Save button is clicked, we validate by calling the `submit` method which calls the `validateAndMutate` function with the validation options. \
+When the Save button is clicked, we run our validation in the `submit` method by calling `validateAndMutate` function with the `validation options`. \
 <br>
 The validator will check for a `value` property on the `target` object defined (in this case `fullname`) and apply the `rules` defined to it. \
 The function will return `true` if validation passes. \

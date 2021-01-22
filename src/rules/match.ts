@@ -7,7 +7,7 @@ export const match = (compare :any) => (value: any) :Validation => {
 
   if(!(compare instanceof RegExp)) throw new Error("The compare parameter in the match rule must be regex");
 
-  if((value+"").match(compare)) {
+  if(((value+"").match(compare) || []).length > 0) {
     return {
       isValid: true,
       rule: undefined,

@@ -38,7 +38,7 @@ When only the `[validateModifier]` is passed, It will validate but not invalidat
 <input v-model="age" v-vsv-on.input="{ target: age, rules: age.rules }">
 ```
 
-When non of the modifiers are passedm It will only validate on `blur`
+When non of the modifiers are passed, It will only validate on `blur`
 ```html
 <!-- This will by default validate on blur but not invalidate -->
 <input v-model="age" v-vsv-on="{ target: age, rules: age.rules }">
@@ -54,6 +54,10 @@ A shortand syntax is also supported where you can use an array instead of an obj
 <!-- Target has to be the first, rules second and property third -->
 <input v-model="age" v-vsv-on="[ age, age.rules ]">
 <input v-model="age" v-vsv-on="[ age, age.rules, 'value' ]">
+```
+The shorthand syntax has the following order.
+```html
+<input v-model="age" v-vsv-on="[ [target], [rules], [property], [validateIf] ]">
 ```
 
 <br><br>
@@ -92,7 +96,7 @@ The above will allow ONLY numbers to be entered.
 ## v-vsv-max
 `v-vsv-max="[max]"`
 
-This directive will place a maximum limit of defined in `max` on the value of your input element. Best used for numeric inputs
+This directive will place a maximum limit on the value of your input element. Best used for numeric inputs
 ```html
 <input v-model="amount.value" v-vsv-max="100000" />
 ```
@@ -104,5 +108,5 @@ This directive will place a maximum limit of defined in `max` on the value of yo
 ```html
 <input v-model="fullname.value" v-vsv-length="20" />
 ```
-This will place a maximum limit of 20 on the length of characters of your input element
+This will place a maximum limit on the length of characters of your input element
 <br>

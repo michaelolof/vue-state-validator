@@ -14,13 +14,13 @@ const handlers = {
     validateLengthHandler: "___vueLiteValidatorValidateLengthHandler___"
 };
 const validateOn = {
-    bind(el, binding) {
+    update(el, binding) {
         const events = Object.keys(binding.modifiers || {});
         const validationEvent = events[0] || "blur";
         const inValidateEvent = events[1];
         let option = binding.value || { target: { value: undefined } };
         if (Array.isArray(option)) {
-            option = { target: option[0], rules: option[1], property: option[2] };
+            option = { target: option[0], rules: option[1], property: option[2], validateIf: option[3] };
         }
         el.addEventListener(validationEvent, validationHandler);
         el[handlers.validateOn.validationHandler] = validationHandler;
@@ -60,7 +60,7 @@ const validateOn = {
     },
 };
 const validatePrevent = {
-    bind(el, binding) {
+    update(el, binding) {
         const rules = buildRulesFromBinding(binding);
         el.addEventListener("keydown", validatePreventHandler);
         el.addEventListener("paste", onPasteValidatePreventHandler);
@@ -91,7 +91,7 @@ const validatePrevent = {
     }
 };
 const validateAllow = {
-    bind(el, binding) {
+    update(el, binding) {
         const rules = buildRulesFromBinding(binding);
         el.addEventListener("keydown", validateAllowHandler);
         el.addEventListener("paste", onPasteValidateAllowHandler);
@@ -122,7 +122,7 @@ const validateAllow = {
     }
 };
 const validateMax = {
-    bind(el, binding) {
+    update(el, binding) {
         const maximum = binding.value;
         el.addEventListener("keyup", validateMaxHandler);
         el[handlers.validateMaxHandler] = validateMaxHandler;
@@ -145,7 +145,7 @@ const validateMax = {
     }
 };
 const validateLength = {
-    bind(el, binding) {
+    update(el, binding) {
         const maximum = binding.value;
         el.addEventListener("keydown", validateLengthHandler);
         el[handlers.validateLengthHandler] = validateLengthHandler;
@@ -174,7 +174,7 @@ function buildRulesFromBinding(binding) {
     if (binding.modifiers["integer"])
         rules.push(integer);
     if (binding.modifiers["match"]) {
-        const compare = toRegex(binding.expression) || binding.expression;
+        const compare = toRegex(binding.value) || binding.value;
         rules.push(match(compare));
     }
     return rules;

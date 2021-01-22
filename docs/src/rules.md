@@ -50,10 +50,10 @@ function alphabet(value) {
   const isValid = /^[A-Za-z]+$/.test(value); 
   
   if(isValid) { 
-    return { isValid, rule: undefined } // No need to return rule here.
+    return { isValid: true, rule: undefined } // No need to return rule here.
   }
   else { 
-    return { isValid, rule: "alphabet" } // Need to return rule when it is invalid.
+    return { isValid: false, rule: "alphabet" } // Need to return rule when it is invalid.
   }
 }
 ```

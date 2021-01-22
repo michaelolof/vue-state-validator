@@ -1,6 +1,6 @@
 # Installation
 
-Installation is as straightforward as any Vue plugin.
+Installation is quite straightforward as any Vue plugin.
 
 First install module as a dependency.
 
