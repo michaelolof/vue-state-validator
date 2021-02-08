@@ -1,4 +1,3 @@
-import { toRegex } from "../utils";
 import { Validation } from "./index";
 
 

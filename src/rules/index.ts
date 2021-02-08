@@ -5,6 +5,7 @@ export { contains } from "./contains";
 export { containsNumber as containsNumbers } from "./containsNumbers";
 export { decimal } from "./decimal";
 export { email } from "./email";
+export { equal } from "./equal";
 export { integer } from "./integer";
 export { ipAddress } from "./ipAddress";
 export { macAddress } from "./macAddress";

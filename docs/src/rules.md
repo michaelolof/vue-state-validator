@@ -19,6 +19,7 @@ This library ships with a bunch of built in validation rules.
 | `contains(string)`          | `contains("O")("One")`              | Checks if string is in value      |
 | `decimal`                   | `decimal(1.2)`                      | Checks if value is a decimal      |
 | `email`                     | `email("john@doe.com")`             | Checks if value is an email address      |
+| `equal`                     | `equal([1,2,3])([1,2,3])`           | Checks for deep equality between primitive and non-primitive types      |
 | `integer`                   | `integer(12)`                       | Checks if value is an integer      |
 | `ipAddress`                 | `ipAddress("127.0.0.1")`            | Checks if value is an IP address      |
 | `macAddress`                | `macAddress("xx:xa:xx:xx:xx:xx")`   | Checks if value is a MAC address      |

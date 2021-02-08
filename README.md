@@ -124,6 +124,7 @@ In your HTML, you'd do some thing like this to display the errors.
 | `charRange(number, number)` | `charRange(2, 7)("One")`            | Checks that the length of characters must be between 2 and 7      |
 | `contains(string)`          | `contains("O")("One")`              | Checks if string is in value      |
 | `decimal`                   | `decimal(1.2)`                      | Checks if value is a decimal      |
+| `equal`                     | `equal([1,2,3])([1,2,3])`           | Checks for deep equality between primitive and non-primitive types      |
 | `email`                     | `email("john@doe.com")`             | Checks if value is an email address      |
 | `integer`                   | `integer(12)`                       | Checks if value is an integer      |
 | `ipAddress`                 | `ipAddress("127.0.0.1")`            | Checks if value is an IP address      |
