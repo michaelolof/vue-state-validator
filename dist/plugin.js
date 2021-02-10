@@ -60,7 +60,7 @@ const validateOn = {
     },
 };
 const validatePrevent = {
-    update(el, binding) {
+    bind(el, binding) {
         const rules = buildRulesFromBinding(binding);
         el.addEventListener("keydown", validatePreventHandler);
         el.addEventListener("paste", onPasteValidatePreventHandler);
@@ -91,7 +91,7 @@ const validatePrevent = {
     }
 };
 const validateAllow = {
-    update(el, binding) {
+    bind(el, binding) {
         const rules = buildRulesFromBinding(binding);
         el.addEventListener("keydown", validateAllowHandler);
         el.addEventListener("paste", onPasteValidateAllowHandler);

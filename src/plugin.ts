@@ -81,7 +81,7 @@ const validateOn = {
 
 const validatePrevent = {
 
-  update(el :any, binding :any) {
+  bind(el :any, binding :any) {
 
     const rules = buildRulesFromBinding(binding);
     el.addEventListener("keydown", validatePreventHandler);
@@ -120,7 +120,7 @@ const validatePrevent = {
 
 const validateAllow = {
 
-  update(el :any, binding :any) {
+  bind(el :any, binding :any) {
 
     const rules = buildRulesFromBinding(binding);
     el.addEventListener("keydown", validateAllowHandler);

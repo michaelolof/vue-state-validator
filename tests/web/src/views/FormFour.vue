@@ -10,7 +10,7 @@
 
       <div class="form__group">
         <label for="fullname" class="form__label">Account number</label>
-        <input v-model="accountNo.value" name="accountNo" v-vsv-length="10" v-vsv-allow.numeric class="form__input" type="text" placeholder="2033911100" autocomplete="off" />
+        <input v-model="accountNo.value" name="accountNo" v-vsv-length="10" v-vsv-prevent.numeric class="form__input" type="text" placeholder="2033911100" autocomplete="off" />
         <span v-if="vsv.accountNo && vsv.accountNo.$isEmpty" class="text-error">Please an account number</span>
         <span v-else-if="vsv.accountNo && vsv.accountNo.$isWrong" class="text-error">Please enter a valid account number</span>
       </div>
