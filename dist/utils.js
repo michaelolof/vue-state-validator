@@ -1,4 +1,7 @@
-export function isControlKey(evt) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.constants = exports.isEqual = exports.objectHasProperty = exports.objectIsEmpty = exports.toRegex = exports.unset = exports.set = exports.isControlKey = void 0;
+function isControlKey(evt) {
     const code = evt.keyCode;
     return ((code === 8) ||
         (code === 9) ||
@@ -6,25 +9,28 @@ export function isControlKey(evt) {
         (code >= 37 && code <= 40) ||
         (evt.ctrlKey || evt.altKey || evt.metaKey));
 }
-export function set(target, key, value) {
-    if (constants.Vue) {
-        constants.Vue.set(target, key, value);
+exports.isControlKey = isControlKey;
+function set(target, key, value) {
+    if (exports.constants.Vue) {
+        exports.constants.Vue.set(target, key, value);
     }
     else {
         target[key] = value;
     }
 }
-export function unset(target, key) {
+exports.set = set;
+function unset(target, key) {
     if (!objectHasProperty(target, key))
         return;
-    if (constants.Vue) {
-        constants.Vue.delete(target, key);
+    if (exports.constants.Vue) {
+        exports.constants.Vue.delete(target, key);
     }
     else {
         delete target[key];
     }
 }
-export function toRegex(val) {
+exports.unset = unset;
+function toRegex(val) {
     try {
         const flags = val.replace(/.*\/([gimy]*)$/, '$1');
         const pattern = val.replace(new RegExp('^/(.*?)/' + flags + '$'), '$1');
@@ -34,16 +40,19 @@ export function toRegex(val) {
         return undefined;
     }
 }
-export function objectIsEmpty(obj) {
+exports.toRegex = toRegex;
+function objectIsEmpty(obj) {
     return (Object.keys(obj).length === 0 && obj.constructor === Object);
 }
-export function objectHasProperty(obj, prop) {
+exports.objectIsEmpty = objectIsEmpty;
+function objectHasProperty(obj, prop) {
     if (obj === undefined || obj === null)
         return false;
     const proto = obj.__proto__ || obj.constructor.prototype;
     return (prop in obj) && (!(prop in proto) || proto[prop] !== obj[prop]);
 }
-export function isEqual(value, other) {
+exports.objectHasProperty = objectHasProperty;
+function isEqual(value, other) {
     // Get the value type
     const type = Object.prototype.toString.call(value);
     // If the two objects are not the same type, return false
@@ -102,7 +111,8 @@ export function isEqual(value, other) {
     // If nothing failed, return true
     return true;
 }
+exports.isEqual = isEqual;
 ;
-export const constants = {
+exports.constants = {
     Vue: undefined
 };

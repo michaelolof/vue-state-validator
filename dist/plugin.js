@@ -1,6 +1,8 @@
-import { invalidateMutatedField, validateAndMutate, validateValue } from "./validators";
-import { alpha, alphaNumeric, integer, max, numeric, maxChar, match } from "./rules";
-import { constants, isControlKey, toRegex } from "./utils";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const validators_1 = require("./validators");
+const rules_1 = require("./rules");
+const utils_1 = require("./utils");
 const handlers = {
     validateOn: {
         validationHandler: "___vueLiteValidatorValidateOnValidationHandler___",
@@ -36,15 +38,15 @@ const validateOn = {
              */
             if (validationEvent === "input") {
                 setTimeout(() => {
-                    validateAndMutate([option]);
+                    validators_1.validateAndMutate([option]);
                 }, 1500);
             }
             else
-                validateAndMutate([option]);
+                validators_1.validateAndMutate([option]);
         }
         function invalidationHandler(evt) {
             evt.stopPropagation();
-            invalidateMutatedField(option.target);
+            validators_1.invalidateMutatedField(option.target);
         }
     },
     unbind(el, binding) {
@@ -68,17 +70,17 @@ const validatePrevent = {
         el[handlers.onPasteValidatePreventHandler] = onPasteValidatePreventHandler;
         //---------------------------------------------------------
         function validatePreventHandler(evt) {
-            if (isControlKey(evt))
+            if (utils_1.isControlKey(evt))
                 return;
             const value = evt.key.trim();
-            const isValid = validateValue(value, rules);
+            const isValid = validators_1.validateValue(value, rules);
             if ((value + "").length && isValid)
                 evt.preventDefault();
         }
         function onPasteValidatePreventHandler(evt) {
             //@ts-ignore
             const value = (evt.clipboardData || window.clipboardData).getData('text');
-            const isValid = validateValue(value, rules);
+            const isValid = validators_1.validateValue(value, rules);
             if ((value + "").length && isValid)
                 evt.preventDefault();
         }
@@ -99,17 +101,17 @@ const validateAllow = {
         el[handlers.onPasteValidateAllowHandler] = onPasteValidateAllowHandler;
         //-------------------------------------------------------
         function validateAllowHandler(evt) {
-            if (isControlKey(evt))
+            if (utils_1.isControlKey(evt))
                 return;
             const value = evt.key.trim();
-            const isNotValid = validateValue(value, rules) === false;
+            const isNotValid = validators_1.validateValue(value, rules) === false;
             if ((value + "").length && isNotValid)
                 evt.preventDefault();
         }
         function onPasteValidateAllowHandler(evt) {
             //@ts-ignore
             const value = (evt.clipboardData || window.clipboardData).getData('text');
-            const isNotValid = validateValue(value, rules) === false;
+            const isNotValid = validators_1.validateValue(value, rules) === false;
             if ((value + "").length && isNotValid)
                 evt.preventDefault();
         }
@@ -128,9 +130,9 @@ const validateMax = {
         el[handlers.validateMaxHandler] = validateMaxHandler;
         //-------------------------------------------------------
         function validateMaxHandler(evt) {
-            if (isControlKey(evt))
+            if (utils_1.isControlKey(evt))
                 return;
-            if (max(maximum)(evt.target.value).isValid === false) {
+            if (rules_1.max(maximum)(evt.target.value).isValid === false) {
                 evt.preventDefault();
                 const event = document.createEvent("Event");
                 event.initEvent("input", true, true);
@@ -151,9 +153,9 @@ const validateLength = {
         el[handlers.validateLengthHandler] = validateLengthHandler;
         //-------------------------------------------------------
         function validateLengthHandler(evt) {
-            if (isControlKey(evt))
+            if (utils_1.isControlKey(evt))
                 return;
-            if (maxChar(maximum - 1)(evt.target.value).isValid === false) {
+            if (rules_1.maxChar(maximum - 1)(evt.target.value).isValid === false) {
                 evt.preventDefault();
             }
         }
@@ -166,22 +168,22 @@ const validateLength = {
 function buildRulesFromBinding(binding) {
     const rules = [];
     if (binding.modifiers["alpha"])
-        rules.push(alpha);
+        rules.push(rules_1.alpha);
     if (binding.modifiers["numeric"])
         rules.push(numericChar);
     if (binding.modifiers["alphaNumeric"])
-        rules.push(alphaNumeric);
+        rules.push(rules_1.alphaNumeric);
     if (binding.modifiers["integer"])
-        rules.push(integer);
+        rules.push(rules_1.integer);
     if (binding.modifiers["match"]) {
-        const compare = toRegex(binding.value) || binding.value;
-        rules.push(match(compare));
+        const compare = utils_1.toRegex(binding.value) || binding.value;
+        rules.push(rules_1.match(compare));
     }
     return rules;
 }
 function numericChar(value) {
     value = (value + "").trim();
-    if ((value === ".") || numeric(value).isValid)
+    if ((value === ".") || rules_1.numeric(value).isValid)
         return {
             isValid: true,
             rule: undefined
@@ -189,9 +191,9 @@ function numericChar(value) {
     else
         return { isValid: false, rule: "numeric" };
 }
-export default {
+exports.default = {
     install(Vue) {
-        constants.Vue = Vue;
+        utils_1.constants.Vue = Vue;
         Vue.directive("vsv-on", validateOn);
         Vue.directive("vsv-prevent", validatePrevent);
         Vue.directive("vsv-allow", validateAllow);

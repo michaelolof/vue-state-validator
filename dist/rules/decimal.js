@@ -1,4 +1,7 @@
-export const decimal = (value) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.decimal = void 0;
+exports.decimal = (value) => {
     const isDecimal = () => /^[-]?\d*(\.\d+)?$/.test(value);
     if (isDecimal())
         return {

@@ -1,6 +1,9 @@
-import { isEmpty, required } from "./rules/required";
-import { objectIsEmpty, set, unset } from "./utils";
-export function validate(options) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.invalidateMutatedField = exports.validateFieldAndMutate = exports.validateValue = exports.getErrorsAndMutate = exports.getErrors = exports.validateAndMutate = exports.validate = void 0;
+const required_1 = require("./rules/required");
+const utils_1 = require("./utils");
+function validate(options) {
     return _v(resolvePureValidationOptions(options));
     //---------------------------------------------------------
     function _v(options) {
@@ -14,7 +17,8 @@ export function validate(options) {
         return true;
     }
 }
-export function validateAndMutate(options) {
+exports.validate = validate;
+function validateAndMutate(options) {
     return _v(resolveMutatingValidationOptions(options));
     //------------------------------------------------------------
     function _v(options) {
@@ -29,7 +33,8 @@ export function validateAndMutate(options) {
         return rtn;
     }
 }
-export function getErrors(options) {
+exports.validateAndMutate = validateAndMutate;
+function getErrors(options) {
     const field = {};
     for (let key in options) {
         const option = resolvePureValidationOption(options[key]);
@@ -39,12 +44,13 @@ export function getErrors(options) {
         validateFieldAndMutate(field[key], "value", option.rules);
         // Clean up the field object after validation.
         delete field[key]["value"];
-        if (objectIsEmpty(field[key]))
+        if (utils_1.objectIsEmpty(field[key]))
             delete field[key];
     }
     return field;
 }
-export function getErrorsAndMutate(options) {
+exports.getErrors = getErrors;
+function getErrorsAndMutate(options) {
     const field = {};
     for (let key in options) {
         const option = resolveMutatingValidationOption(options[key]);
@@ -55,12 +61,13 @@ export function getErrorsAndMutate(options) {
         validateFieldAndMutate(option.target, option.property, option.rules);
         // Clean up the field object after validation.
         delete field[key]["value"];
-        if (objectIsEmpty(field[key]))
+        if (utils_1.objectIsEmpty(field[key]))
             delete field[key];
     }
     return field;
 }
-export function validateValue(value, rules) {
+exports.getErrorsAndMutate = getErrorsAndMutate;
+function validateValue(value, rules) {
     for (let rule of rules) {
         const validation = validateAsOptional(value, rule);
         if (!validation.isValid)
@@ -68,20 +75,21 @@ export function validateValue(value, rules) {
     }
     return true;
 }
-export function validateFieldAndMutate(target, value, rules) {
+exports.validateValue = validateValue;
+function validateFieldAndMutate(target, value, rules) {
     const val = target[value || "value"];
     for (let rule of rules) {
         const validation = validateAsOptional(val, rule);
         if (!validation.isValid) {
             if (validation.rule === "required") {
-                set(target, "$isEmpty", true);
-                unset(target, "$isWrong");
+                utils_1.set(target, "$isEmpty", true);
+                utils_1.unset(target, "$isWrong");
             }
             else {
-                set(target, "$isWrong", true);
-                unset(target, "$isEmpty");
+                utils_1.set(target, "$isWrong", true);
+                utils_1.unset(target, "$isEmpty");
             }
-            set(target, "$rule", validation.rule);
+            utils_1.set(target, "$rule", validation.rule);
             return false;
         }
         else {
@@ -90,16 +98,18 @@ export function validateFieldAndMutate(target, value, rules) {
     }
     return true;
 }
-export function invalidateMutatedField(target) {
-    unset(target, "$isEmpty");
-    unset(target, "$isWrong");
-    unset(target, "$rule");
+exports.validateFieldAndMutate = validateFieldAndMutate;
+function invalidateMutatedField(target) {
+    utils_1.unset(target, "$isEmpty");
+    utils_1.unset(target, "$isWrong");
+    utils_1.unset(target, "$rule");
 }
+exports.invalidateMutatedField = invalidateMutatedField;
 function validateAsOptional(value, rule) {
     const intialValidation = rule(value);
     if (rule.name === "required")
         return intialValidation;
-    if (isEmpty(value) || intialValidation.isValid)
+    if (required_1.isEmpty(value) || intialValidation.isValid)
         return {
             isValid: true,
             rule: undefined,
@@ -135,7 +145,7 @@ function resolveMutatingValidationOption(option) {
 function resolveRules(rules) {
     return rules && Array.isArray(rules)
         ? rules : rules && typeof rules === "function"
-        ? [rules] : [required];
+        ? [rules] : [required_1.required];
 }
 function resolveValidateIf(validateIf) {
     return validateIf === undefined || validateIf === null ? true : validateIf;

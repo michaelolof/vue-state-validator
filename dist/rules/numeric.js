@@ -1,4 +1,7 @@
-export const numeric = (value) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.numeric = void 0;
+exports.numeric = (value) => {
     if (!isNaN(value))
         return {
             isValid: true,

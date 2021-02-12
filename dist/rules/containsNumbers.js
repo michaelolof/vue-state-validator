@@ -1,4 +1,7 @@
-export const containsNumber = (size) => (value) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.containsNumber = void 0;
+exports.containsNumber = (size) => (value) => {
     const numbersFound = () => {
         let found = 0;
         for (let char of (value) + "") {
