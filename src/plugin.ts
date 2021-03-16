@@ -3,219 +3,270 @@ import { alpha, alphaNumeric, integer, max, numeric, Rule, Validation, maxChar, 
 import { constants, isControlKey, toRegex } from "./utils";
 
 
+function useValidateOn() {
 
-const handlers = {
-  validateOn: {
-    validationHandler: "___vueLiteValidatorValidateOnValidationHandler___",
-    invalidationHandler: "___vueLiteValidatorValidateOnInvalidationHandler___"
-  },
-  validatePreventHandler: "___vueLiteValidatorValidatePreventHandler",
-  onPasteValidatePreventHandler: "___vueLiteValidatorOnPasteValidatePreventHandler",
-  validateAllowHandler: "___vueLiteValidatorValidateAllowHandler___",
-  onPasteValidateAllowHandler: "___vueLiteValidatorOnPasteValidateAllowHandler___",
-  validateMaxHandler: "___vueLiteValidatorValidateMaxHandler___",
-  validateLengthHandler: "___vueLiteValidatorValidateLengthHandler___"
-}
+  const validationHandler = (option :any, eventName :string) => (evt :any) => {
+    evt.stopPropagation();
+    /**
+     * For 'input' validating event wait 21.5 seconds before kicking in validation for better experience
+     */
+    if(eventName === "input") {
+      setTimeout(() => {
+        validateAndMutate([option]);
+      }, 1500)
+    }
+    else validateAndMutate([ option ]);
+  }
 
+  const invalidationHandler = (option :any) => (evt: any) => {
+    evt.stopPropagation();
+    invalidateMutatedField(option.target);
+  }
 
-const validateOn = {
+  let validationEvent = "blur";
+  let inValidateEvent :string|undefined = undefined;
+  let currentValidationHandler: any = undefined;
+  let currentInvalidationHandler: any = undefined;
 
-  update(el: any, binding :any) {
-        
+  const setup = (el: any, binding: any, vnode: any) => {
     const events = Object.keys(binding.modifiers || {}); 
-    const validationEvent = events[ 0 ] || "blur";
-    const inValidateEvent = events[ 1 ];
+    validationEvent = events[ 0 ] || "blur";
+    inValidateEvent = events[ 1 ];
+    const component = vnode.componentInstance;
     let option = binding.value || { target: { value: undefined } }
-
+    
     if(Array.isArray(option)) {
       option = { target: option[0], rules: option[1], property: option[2], validateIf: option[3] }
-    }
+    }    
+
     
-    el.addEventListener(validationEvent, validationHandler);
-    el[handlers.validateOn.validationHandler] = validationHandler;
-    
-    if(inValidateEvent) {
-      el.addEventListener(inValidateEvent, invalidationHandler)
-      el[handlers.validateOn.invalidationHandler] = invalidationHandler;
-    }
-    
-    //--------------------------------------------------------
-    function validationHandler(evt :any) {
-      evt.stopPropagation();
-      /**
-       * For 'input' validating event wait 21.5 seconds before kicking in validation for better experience
-       */
-      if(validationEvent === "input") {
-        setTimeout(() => {
-          validateAndMutate([option]);
-        }, 1500)
+    if(component) {
+      component.$on(validationEvent, validationHandler(option, validationEvent));
+    } else {
+      if(currentValidationHandler) { 
+        el.removeEventListener(validationEvent, currentValidationHandler);
       }
-      else validateAndMutate([ option ]);
+      currentValidationHandler = validationHandler(option, validationEvent);
+      el.addEventListener(validationEvent, currentValidationHandler)
     }
 
-    function invalidationHandler(evt: any) {
-      evt.stopPropagation();
-      invalidateMutatedField(option.target);
-    }
-
-  },
-
-  unbind(el: any, binding :any) {
-
-    const events = Object.keys(binding.modifiers || {}); 
-    const validationEvent = events[ 0 ] || "input";
-    const inValidateEvent = events[ 1 ];
-
-    const validationHandler = el[handlers.validateOn.validationHandler];
-    el.removeEventListener(validationEvent, validationHandler);
-    
     if(inValidateEvent) {
-      const invalidationHandler = el[handlers.validateOn.invalidationHandler];
-      el.removeEventListener(validationEvent, invalidationHandler);
+      if(component) {
+        component.$on(inValidateEvent, invalidationHandler(option));
+      } else {
+        if(currentValidationHandler) { 
+          el.removeEventListener(inValidateEvent, currentInvalidationHandler);
+        }
+        currentValidationHandler = invalidationHandler(option);
+        el.addEventListener(inValidateEvent, currentInvalidationHandler)
+      }
     }
+  }
 
-  },
+  return {
+    bind: setup,
+    update: setup,
+    unbind(el: any, binding :any) {
+      el.removeEventListener(validationEvent, currentValidationHandler);
+    
+      if(inValidateEvent) {
+        el.removeEventListener(validationEvent, currentInvalidationHandler);
+      }
+    }
+  }
 
 }
 
+function useValidatePrevent() {
 
-const validatePrevent = {
+  const validatePreventHandler = (rules :Rule[]) => (evt :any) => {
+    if(isControlKey(evt)) return;
+    
+    const value = evt.key.trim();
+    const isValid = validateValueChars(value, rules);
+    if((value+"").length && isValid) evt.preventDefault();
+  }
 
-  bind(el :any, binding :any) {
+  const onPasteValidatePreventHandler = (rules :Rule[]) => (evt :any) => {
+    //@ts-ignore
+    const value = (evt.clipboardData || window.clipboardData).getData('text');
+    const isValid = validateValueChars(value, rules);
+    if((value+"").length && isValid) evt.preventDefault();      
+  }
 
+  let currentPreventHandler :any = undefined;
+  let currentOnPastePreventHandler :any = undefined;
+
+
+  const setup = (el :any, binding: any, vnode: any) => {
     const rules = buildRulesFromBinding(binding);
-    el.addEventListener("keydown", validatePreventHandler);
-    el.addEventListener("paste", onPasteValidatePreventHandler);
+    const component = vnode.componentInstance;
 
-    el[handlers.validatePreventHandler] = validatePreventHandler;
-    el[handlers.onPasteValidatePreventHandler] = onPasteValidatePreventHandler;
-
-    //---------------------------------------------------------
-    function validatePreventHandler(evt :any) {
-      if(isControlKey(evt)) return;
-      
-      const value = evt.key.trim();
-      const isValid = validateValue(value, rules);
-      if((value+"").length && isValid) evt.preventDefault();
+    if(component) {
+      component.$on("keydown", validatePreventHandler(rules));
+      component.$on("paste", onPasteValidatePreventHandler(rules));
+    } else {
+      if(currentPreventHandler) el.removeEventListener("keydown", currentPreventHandler);
+      if(currentOnPastePreventHandler) el.removeEventListener("paste", currentOnPastePreventHandler);
+      currentPreventHandler = validatePreventHandler(rules);
+      currentOnPastePreventHandler = onPasteValidatePreventHandler(rules);
+      el.addEventListener("keydown", currentPreventHandler)
+      el.addEventListener("paste", currentOnPastePreventHandler)
     }
+  }
 
-    function onPasteValidatePreventHandler(evt :any) {
+  return {
+    bind: setup,
+    update: setup,
+    unbind(el :any) {
+      el.removeEventListener("keydown", currentPreventHandler);
+      el.removeEventListener("paste", currentOnPastePreventHandler);      
+    }
+  }
+
+}
+
+function useValidateAllow() {
+
+  const validateAllowHandler = (rules :Rule[]) => (evt :any) => {
+    if(isControlKey(evt)) return;
+
+    const value = evt.key.trim();
+    const isNotValid = validateValueChars(value, rules) === false;
+    if((value+"").length && isNotValid) evt.preventDefault();
+  }
+
+  const onPasteValidateAllowHandler = (rules :Rule[]) => (evt :any) => {
       //@ts-ignore
       const value = (evt.clipboardData || window.clipboardData).getData('text');
-      const isValid = validateValue(value, rules);
-      if((value+"").length && isValid) evt.preventDefault();      
-    }
-
-  },
-
-  unbind(el :any) {
-    const validatePreventHandler = el[handlers.validatePreventHandler];
-    const onPasteValidatePreventHandler = el[handlers.onPasteValidatePreventHandler];
-    el.removeEventListener("keydown", validatePreventHandler);
-    el.removeEventListener("paste", onPasteValidatePreventHandler);
+      const isNotValid = validateValueChars(value, rules) === false;
+      if((value+"").length && isNotValid) evt.preventDefault();
   }
 
-}
+  let currentAllowHandler :any = undefined;
+  let currentOnPasteAllowHandler :any = undefined;
 
 
-const validateAllow = {
-
-  bind(el :any, binding :any) {
-
+  const setup = (el :any, binding: any, vnode: any) => {
     const rules = buildRulesFromBinding(binding);
-    el.addEventListener("keydown", validateAllowHandler);
-    el.addEventListener("paste", onPasteValidateAllowHandler);
+    const component = vnode.componentInstance;
 
-    el[handlers.validateAllowHandler] = validateAllowHandler;
-    el[handlers.onPasteValidateAllowHandler] = onPasteValidateAllowHandler;
-
-    //-------------------------------------------------------
-    function validateAllowHandler(evt :any) {
-      if(isControlKey(evt)) return;
-
-      const value = evt.key.trim();
-      const isNotValid = validateValue(value, rules) === false;
-      if((value+"").length && isNotValid) evt.preventDefault();
+    if(component) {
+      component.$on("keydown", validateAllowHandler(rules));
+      component.$on("paste", onPasteValidateAllowHandler(rules));
+    } else {
+      if(currentAllowHandler) el.removeEventListener("keydown", currentAllowHandler);
+      if(currentOnPasteAllowHandler) el.removeEventListener("paste", currentOnPasteAllowHandler);
+      currentAllowHandler = validateAllowHandler(rules);
+      currentOnPasteAllowHandler = onPasteValidateAllowHandler(rules);
+      el.addEventListener("keydown", currentAllowHandler)
+      el.addEventListener("paste", currentOnPasteAllowHandler)
     }
+  }
 
-    function onPasteValidateAllowHandler(evt :any) {
-      //@ts-ignore
-      const value = (evt.clipboardData || window.clipboardData).getData('text');
-      const isNotValid = validateValue(value, rules) === false;
-      if((value+"").length && isNotValid) evt.preventDefault();
+  return {
+    bind: setup,
+    update: setup,
+    unbind(el :any) {
+      el.removeEventListener("keydown", currentAllowHandler);
+      el.removeEventListener("paste", currentOnPasteAllowHandler);      
     }
-
-  },
-
-  unbind(el :any) {
-    const validateAllowHandler = el[handlers.validateAllowHandler];
-    const onPasteValidateAllowHandler = el[handlers.onPasteValidateAllowHandler];
-    el.removeEventListener("keydown", validateAllowHandler);
-    el.removeEventListener("paste", onPasteValidateAllowHandler);
   }
 
 }
 
+function validateValueChars(value :string, rules :Rule[]) {
+  let isValid = true;
+  for(let char of value) {
+    isValid = validateValue(char, rules);
+    if(isValid === false) {
+      return false;
+    }
+  }
+  return isValid;
+}
 
-const validateMax = {
-  
-  update(el :any, binding :any) {
+function useValidateMax() {
+
+  const validateMaxHandler = (maximum :number, el :any) => (evt :any) => {
+    if(isControlKey(evt)) return;
+    
+    if(max(maximum)(evt.target.value).isValid === false) {
+      evt.preventDefault();
+      const event = document.createEvent("Event");
+      event.initEvent("input", true, true);
+      el.value = maximum;
+      el.dispatchEvent(event);
+    }
+  }
+
+  let currentMaxHandler: any = undefined;
+
+  const setup = (el :any, binding :any, vnode: any) => {
 
     const maximum = binding.value;
-    el.addEventListener("keyup", validateMaxHandler)
-    el[handlers.validateMaxHandler] = validateMaxHandler;
+    const component = vnode.componentInstance;
 
-    //-------------------------------------------------------
-    function validateMaxHandler(evt :any) {
-      if(isControlKey(evt)) return;
-      
-      if(max(maximum)(evt.target.value).isValid === false) {
-        evt.preventDefault();
-        const event = document.createEvent("Event");
-        event.initEvent("input", true, true);
-        el.value = maximum;
-        el.dispatchEvent(event);
+    if(component) {
+      component.$on("keyup", validateMaxHandler(maximum, el));
+    } else {
+      if(currentMaxHandler) {
+        el.removeEventListener("keyup", currentMaxHandler);
       }
+      currentMaxHandler = validateMaxHandler(maximum, el);
+      el.addEventListener("keyup", currentMaxHandler);
     }
-
-  },
-
-  unbind(el :any) {
-
-    const validateMaxHandler = el[handlers.validateMaxHandler];
-    el.removeEventListener("keyup", validateMaxHandler);
-
   }
+  
+
+  return {
+    bind: setup,
+    update: setup,
+    unbind(el :any, binding :any) {
+      el.removeEventListener("keyup", currentMaxHandler);
+    }
+  }
+
 }
 
+function useValidateLength() {
 
-const validateLength = {
-  
-  update(el :any, binding :any) {
+  const validateLengthHandler = (maximum :number) => (evt :any) => {
+    if(isControlKey(evt)) return;
+
+    if(maxChar(maximum-1)(evt.target.value).isValid === false) { 
+      evt.preventDefault();
+    }
+  }
+
+  let currentLengthHandler: any = undefined;
+
+  const setup = (el :any, binding :any, vnode: any) => {
 
     const maximum = binding.value;
-    el.addEventListener("keydown", validateLengthHandler)
-    el[handlers.validateLengthHandler] = validateLengthHandler;
+    const component = vnode.componentInstance;
 
-    //-------------------------------------------------------
-    function validateLengthHandler(evt :any) {
-      if(isControlKey(evt)) return;
-
-      if(maxChar(maximum-1)(evt.target.value).isValid === false) { 
-        evt.preventDefault();
+    if(component) {
+      component.$on("keydown", validateLengthHandler(maximum));
+    } else {
+      if(currentLengthHandler) {
+        el.removeEventListener("keydown", currentLengthHandler);
       }
+      currentLengthHandler = validateLengthHandler(maximum);
+      el.addEventListener("keydown", currentLengthHandler);
     }
-
-  },
-
-  unbind(el :any) {
-
-    const validateLengthHandler = el[handlers.validateLengthHandler];
-    el.removeEventListener("keydown", validateLengthHandler);
-
   }
-}
+  
 
+  return {
+    bind: setup,
+    update: setup,
+    unbind(el :any, binding :any) {
+      el.removeEventListener("keydown", currentLengthHandler);
+    }
+  }
+
+}
 
 function buildRulesFromBinding(binding :any) {
 
@@ -233,7 +284,6 @@ function buildRulesFromBinding(binding :any) {
   return rules;
 }
 
-
 function numericChar(value :any) :Validation {
   value = (value+"").trim();
   if((value === ".") || numeric(value).isValid) return {
@@ -248,11 +298,11 @@ export default {
 
   install(Vue :any) {
     constants.Vue = Vue;
-    Vue.directive("vsv-on", validateOn )
-    Vue.directive("vsv-prevent", validatePrevent )
-    Vue.directive("vsv-allow", validateAllow )
-    Vue.directive("vsv-max", validateMax )
-    Vue.directive("vsv-length", validateLength )
+    Vue.directive("vsv-on", useValidateOn() )
+    Vue.directive("vsv-prevent", useValidatePrevent() )
+    Vue.directive("vsv-allow", useValidateAllow() )
+    Vue.directive("vsv-max", useValidateMax() )
+    Vue.directive("vsv-length", useValidateLength() )
   },
 
   // validateOn,
