@@ -60,13 +60,13 @@ An object that holds information about the field to be validated. Used when call
 ```ts
 type MutatingValidationOption = {
   target?: object, // An object with the value to be validated. Used for mutating validators
-  property?: string // Target property which is to be validated. Default is "value"
+  property?: string | (target :object) => any // Target property which is to be validated. Default is "value".
   rules?: Rule[] // optional. Defaults to [required]
   validateIf?: boolean //optional. Defaults to true
 }
 ```
 - `target` : is the object that contains the value to be validated. By default the validator will check if the target object has a `value` property and use that.
-- `property` : Here you can state which the target property the validator should use. By default the validator will check for a `value` property in the target object.
+- `property` : Here you can state which the target property the validator should use. By default the validator will check for a `value` property in the target object. You can also specify the property using a function that takes the target as a parameter and returns the value to be validated.
 - `rules` : Rules defines an array of rules to validate the field against. If none is entered, it defaults to a unit array with a `required` rule.
 - `validateIf` : This is useful for conditional validation. It will validate if true and ignore validation if false.
 <br><br>

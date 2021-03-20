@@ -56,7 +56,7 @@ function getErrorsAndMutate(options) {
         const option = resolveMutatingValidationOption(options[key]);
         if (!option.validateIf)
             continue;
-        field[key] = { value: option.target[option.property] };
+        field[key] = { value: typeof option.property === "function" ? option.property(option.target) : option.target[option.property] };
         validateFieldAndMutate(field[key], "value", option.rules);
         validateFieldAndMutate(option.target, option.property, option.rules);
         // Clean up the field object after validation.
@@ -76,8 +76,8 @@ function validateValue(value, rules) {
     return true;
 }
 exports.validateValue = validateValue;
-function validateFieldAndMutate(target, value, rules) {
-    const val = target[value || "value"];
+function validateFieldAndMutate(target, property, rules) {
+    const val = typeof property === "function" ? property(target) : target[property || "value"];
     for (let rule of rules) {
         const validation = validateAsOptional(val, rule);
         if (!validation.isValid) {

@@ -44,7 +44,7 @@ ValidatorOption Parameter
 ```ts
 type MutatingValidatorOption = {
   target: object; // [Required]
-  property?: string // optional
+  property?: string | (target :object) => any // optional
   rules?: Rule[]; // optional
   validateIf?: boolean; // optional
 }
@@ -55,13 +55,15 @@ Example
 const title = { value: "Doctor" }; 
 const name = { value: "" };
 const age = { value: 18 };
-const bio = { text: "John Doe is a doctor" },
+const bio = { text: "John Doe is a doctor" };
+const phone = { value: { dialCode: "+234", phoneNo: "" } };
 
 const options = [
   { target: title, rules: [alpha, maxChar(5) ] }, // --> Fail
   { target: name, rules: [required, wordRange(2, 3)]  }, // --> Fail
   { target: age, rules: [required, numeric, min(18), max(35)] }, // --> Pass
-  { target: bio, property: "text", rules: [required, minWord(3), maxWord(20)] } // --> Pass
+  { target: bio, rules: [required, minWord(3), maxWord(20)], property: "text" } // --> Pass
+  { target: phone, rules: [required, minChar(8), maxChar(20)], property: (phone) => phone.value.phoneNo } // --> Fail
 ]
 
 const isValid = validateAndMutate(options);
@@ -71,8 +73,11 @@ console.log(title) // { value: "Doctor", $isWrong: true, $rule: "maxChar" }
 console.log(name) // { value: "John", $isEmpty: true, $rule: "required" }
 console.log(age) // { value: 18 }
 console.log(bio) // { value: "John Doe is a doctor" }
+console.log(phone) // { value: { dialCode: "+234", phoneNo: "" }, $isEmpty: true, $rule: "required" }
 ```
 Since the `bio` field is not using the default `value` property, we have to specify the property to the validator.
+Also the `phone` field which has a more unique structure takes advantage of the property function to get the value to be validated.
+In the case of phone number the actual field we are validating is `phone.value.phoneNo` but the target property is still `phone`
 
 
 
@@ -131,7 +136,7 @@ ValidatorOption Parameter
 ```ts
 type MutatingValidatorOption = {
   target: object; // [Required]
-  property?: string // optional
+  property?: string | (target :object) => any // optional
   rules?: Rule[]; // optional
   validateIf?: boolean; // optional
 }
@@ -144,12 +149,14 @@ const title = { value: "Doctor" };
 const name = { value: "" };
 const age = { value: 18 };
 const bio = { text: "John Doe is a doctor" },
+const phone = { value: { dialCode: "+234", phoneNo: "+234419333991110" } };
 
 const options = [
   title: { target: title, rules: [alpha, maxChar(5) ] }, // --> Fail
   name: { target: name, rules: [required, wordRange(2, 3)]  }, // --> Fail
   age: { target: age, rules: [required, numeric, min(18), max(35)] }, // --> Pass
-  bio: { target: bio, property: "text", rules: [required, minWord(3), maxWord(20)] } // --> Pass
+  bio: { target: bio, property: "text", rules: [required, minWord(3), maxWord(20)] }, // --> Pass
+  phone: { target: phone, rules: [required, minChar(8), maxChar(20)], property: (phone) => phone.value.phoneNo }, // --> pass
 ]
 
 const errors = getErrorsAndMutate(options);
@@ -159,6 +166,7 @@ console.log(title) // { value: "Doctor", $isWrong: true, $rule: "maxChar" }
 console.log(name) // { value: "John", $isEmpty: true, $rule: "required" }
 console.log(age) // { value: 18 }
 console.log(bio) // { value: "John Doe is a doctor" }
+console.log(phone) // { value: { dialCode: "+234", phoneNo: "+234419333991110" } }
 ```
 
 <br><br>

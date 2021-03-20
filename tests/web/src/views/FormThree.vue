@@ -10,7 +10,7 @@
 
       <div class="form__group">
         <label for="fullname" class="form__label">Enter your fullname</label>
-        <input v-model="fullname.value" name="fullname" v-vsv-length="20" v-vsv-allow.alpha class="form__input" type="text" placeholder="Firstname Lastname" autocomplete="off" />
+        <input v-model="fullname.value" name="fullname" v-vsv-length="20" v-vsv-allow.alphaNumeric class="form__input" type="text" placeholder="Firstname Lastname" autocomplete="off" />
         <span v-if="fullname.$isEmpty" class="text-error">Please enter a full name</span>
         <span v-else-if="fullname.$isWrong" class="text-error">Please enter a first name and last name</span>
       </div>
@@ -30,6 +30,13 @@
         <span v-if="amount.$isEmpty" class="text-error">Please enter an amount</span>
         <span v-else-if="amount.$isWrong && amount.$rule === 'range'" class="text-error">Please enter an amount between 100 and 100,000</span>      
         <span v-else-if="amount.$isWrong" class="text-error">Please enter a valid amount</span>      
+      </div>
+
+      <div class="form__group">
+        <label for="amount" class="form__label">Phone</label>
+        <input v-model="phone.value.phoneNo" v-vsv-on.blur.input="{ target: phone, rules: phone.rules, property: phone => phone.value.phoneNo }" name="phone" class="form__input" type="tel" autocomplete="off" />
+        <span v-if="phone.$isEmpty" class="text-error">Please enter a phone number</span>
+        <span v-else-if="phone.$isWrong" class="text-error">Please enter a valid amount</span>      
       </div>
 
       <div class="form__group">
@@ -60,6 +67,10 @@ export default {
         value: undefined, 
         rules: [required, numeric, range(100,100_000)] 
       },
+      phone: { 
+        value: { dialCode: "+234", phoneNo: "" }, 
+        rules: [required, numeric, charRange(8, 20)] 
+      },
       status: undefined,
     }
   },
@@ -70,7 +81,8 @@ export default {
       const options = [
         { target: this.fullname, rules: this.fullname.rules },
         { target: this.age, rules: this.age.rules },
-        { target: this.amount, rules: this.amount.rules }
+        { target: this.amount, rules: this.amount.rules },
+        { target: this.phone, rules: this.phone.rules, property: phone => phone.value.phoneNo },
       ]
 
       const isValid = validateAndMutate(options);

@@ -5,6 +5,8 @@ const rules_1 = require("./rules");
 const utils_1 = require("./utils");
 function useValidateOn() {
     const validationHandler = (option, eventName) => (evt) => {
+        if (evt === undefined || evt instanceof Event === false)
+            return;
         evt.stopPropagation();
         /**
          * For 'input' validating event wait 21.5 seconds before kicking in validation for better experience
@@ -70,6 +72,8 @@ function useValidateOn() {
 }
 function useValidatePrevent() {
     const validatePreventHandler = (rules) => (evt) => {
+        if (evt === undefined || evt instanceof Event === false)
+            return;
         if (utils_1.isControlKey(evt))
             return;
         const value = evt.key.trim();
@@ -78,6 +82,8 @@ function useValidatePrevent() {
             evt.preventDefault();
     };
     const onPasteValidatePreventHandler = (rules) => (evt) => {
+        if (evt === undefined || evt instanceof Event === false)
+            return;
         //@ts-ignore
         const value = (evt.clipboardData || window.clipboardData).getData('text');
         const isValid = validateValueChars(value, rules);
@@ -115,6 +121,8 @@ function useValidatePrevent() {
 }
 function useValidateAllow() {
     const validateAllowHandler = (rules) => (evt) => {
+        if (evt === undefined || evt instanceof Event === false)
+            return;
         if (utils_1.isControlKey(evt))
             return;
         const value = evt.key.trim();
@@ -123,6 +131,8 @@ function useValidateAllow() {
             evt.preventDefault();
     };
     const onPasteValidateAllowHandler = (rules) => (evt) => {
+        if (evt === undefined || evt instanceof Event === false)
+            return;
         //@ts-ignore
         const value = (evt.clipboardData || window.clipboardData).getData('text');
         const isNotValid = validateValueChars(value, rules) === false;
@@ -170,6 +180,8 @@ function validateValueChars(value, rules) {
 }
 function useValidateMax() {
     const validateMaxHandler = (maximum, el) => (evt) => {
+        if (evt === undefined || evt instanceof Event === false)
+            return;
         if (utils_1.isControlKey(evt))
             return;
         if (rules_1.max(maximum)(evt.target.value).isValid === false) {
@@ -205,6 +217,8 @@ function useValidateMax() {
 }
 function useValidateLength() {
     const validateLengthHandler = (maximum) => (evt) => {
+        if (evt === undefined || evt instanceof Event === false)
+            return;
         if (utils_1.isControlKey(evt))
             return;
         if (rules_1.maxChar(maximum - 1)(evt.target.value).isValid === false) {
