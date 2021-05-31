@@ -198,7 +198,7 @@ export function invalidateMutatedField( target :object) {
 function validateAsOptional(value:any, rule :(value :any) => Validation) :Validation {
 
   const intialValidation = rule(value);
-  if(rule.name === "required") return intialValidation;
+  if(intialValidation.rule === "required") return intialValidation;
 
   if(isEmpty(value) || intialValidation.isValid) return {
     isValid: true,

@@ -107,7 +107,7 @@ function invalidateMutatedField(target) {
 exports.invalidateMutatedField = invalidateMutatedField;
 function validateAsOptional(value, rule) {
     const intialValidation = rule(value);
-    if (rule.name === "required")
+    if (intialValidation.rule === "required")
         return intialValidation;
     if (required_1.isEmpty(value) || intialValidation.isValid)
         return {
