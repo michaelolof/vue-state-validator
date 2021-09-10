@@ -1,4 +1,4 @@
-import { notContain } from "../../../src/rules";
+import { notContain } from "../../../src/rules/notContain";
 
 
 describe("notContain()", () => {

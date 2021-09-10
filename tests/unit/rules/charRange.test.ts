@@ -1,4 +1,4 @@
-import { charRange } from "../../../src/rules";
+import { charRange } from "../../../src/rules/charRange";
 
 
 describe("charRange()", () => {

@@ -1,4 +1,4 @@
-import { contains } from "../../../src/rules";
+import { contains } from "../../../src/rules/contains";
 
 
 describe("contains()", () => {

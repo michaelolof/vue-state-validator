@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.equal = void 0;
-const utils_1 = require("../utils");
-exports.equal = (compare) => (value) => {
+var utils_1 = require("../utils");
+exports.equal = function (compare) { return function (value) {
     if (utils_1.isEqual(compare, value)) {
         return {
             isValid: true,
@@ -11,4 +11,4 @@ exports.equal = (compare) => (value) => {
     }
     else
         return { isValid: false, rule: "equal" };
-};
+}; };

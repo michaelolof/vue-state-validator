@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.minWord = void 0;
-exports.minWord = (minimum) => (value) => {
-    const words = (value + "").trim().split(" ").filter(n => n.length > 0);
+exports.minWord = function (minimum) { return function (value) {
+    var words = (value + "").trim().split(" ").filter(function (n) { return n.length > 0; });
     if (minimum <= words.length)
         return {
             isValid: true,
@@ -10,4 +10,4 @@ exports.minWord = (minimum) => (value) => {
         };
     else
         return { isValid: false, rule: "minWord" };
-};
+}; };

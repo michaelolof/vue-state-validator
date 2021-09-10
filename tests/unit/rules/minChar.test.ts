@@ -1,4 +1,4 @@
-import { minChar } from "../../../src/rules";
+import { minChar } from "../../../src/rules/minChar";
 
 
 describe("minChar()", () => {

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.email = void 0;
-exports.email = (value) => {
-    const isEmail = () => /.+@.+/.test(value);
+exports.email = function (value) {
+    var isEmail = function () { return /.+@.+/.test(value); };
     if (isEmail())
         return {
             isValid: true,

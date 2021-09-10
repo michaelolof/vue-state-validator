@@ -1,4 +1,4 @@
-import { maxChar } from "../../../src/rules";
+import { maxChar } from "../../../src/rules/maxChar";
 
 
 describe("maxChar()", () => {

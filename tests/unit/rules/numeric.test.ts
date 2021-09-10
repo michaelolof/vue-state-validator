@@ -1,4 +1,4 @@
-import { numeric } from "../../../src/rules"
+import { numeric } from "../../../src/rules/numeric"
 
 
 

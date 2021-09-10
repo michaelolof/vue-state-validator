@@ -1,4 +1,4 @@
-import { max } from "../../../src/rules";
+import { max } from "../../../src/rules/max";
 
 
 describe("max()", () => {

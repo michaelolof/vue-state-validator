@@ -1,4 +1,4 @@
-import { equal } from "../../../src/rules";
+import { equal } from "../../../src/rules/equal";
 
 
 describe.only("rules.alpha()", () => {

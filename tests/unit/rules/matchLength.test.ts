@@ -1,4 +1,4 @@
-import { matchLength } from "../../../src/rules";
+import { matchLength } from "../../../src/rules/matchLength";
 
 
 describe("matchLength()", () => {

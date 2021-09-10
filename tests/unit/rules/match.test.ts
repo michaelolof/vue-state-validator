@@ -1,4 +1,4 @@
-import { match } from "../../../src/rules";
+import { match } from "../../../src/rules/match";
 
 
 describe("match()", () => {

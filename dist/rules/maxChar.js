@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.maxChar = void 0;
-exports.maxChar = (maximum) => (value) => {
-    const smaller = (val) => (val + "").length <= maximum;
+exports.maxChar = function (maximum) { return function (value) {
+    var smaller = function (val) { return (val + "").length <= maximum; };
     if (smaller(value))
         return {
             isValid: true,
@@ -10,4 +10,4 @@ exports.maxChar = (maximum) => (value) => {
         };
     else
         return { isValid: false, rule: "maxChar" };
-};
+}; };

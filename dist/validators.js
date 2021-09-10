@@ -1,16 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.invalidateMutatedField = exports.validateFieldAndMutate = exports.validateValue = exports.getErrorsAndMutate = exports.getErrors = exports.validateAndMutate = exports.validate = void 0;
-const required_1 = require("./rules/required");
-const utils_1 = require("./utils");
+var required_1 = require("./rules/required");
+var utils_1 = require("./utils");
 function validate(options) {
     return _v(resolvePureValidationOptions(options));
     //---------------------------------------------------------
     function _v(options) {
-        for (let option of options) {
+        for (var _i = 0, options_1 = options; _i < options_1.length; _i++) {
+            var option = options_1[_i];
             if (!option.validateIf)
                 continue;
-            const optionIsValid = validateValue(option.value, option.rules);
+            var optionIsValid = validateValue(option.value, option.rules);
             if (optionIsValid === false)
                 return false;
         }
@@ -22,11 +23,12 @@ function validateAndMutate(options) {
     return _v(resolveMutatingValidationOptions(options));
     //------------------------------------------------------------
     function _v(options) {
-        let rtn = true;
-        for (let option of options) {
+        var rtn = true;
+        for (var _i = 0, options_2 = options; _i < options_2.length; _i++) {
+            var option = options_2[_i];
             if (!option.validateIf)
                 continue;
-            const isValid = validateFieldAndMutate(option.target, option.property, option.rules);
+            var isValid = validateFieldAndMutate(option.target, option.property, option.rules);
             if (isValid === false)
                 rtn = isValid;
         }
@@ -35,9 +37,9 @@ function validateAndMutate(options) {
 }
 exports.validateAndMutate = validateAndMutate;
 function getErrors(options) {
-    const field = {};
-    for (let key in options) {
-        const option = resolvePureValidationOption(options[key]);
+    var field = {};
+    for (var key in options) {
+        var option = resolvePureValidationOption(options[key]);
         if (!option.validateIf)
             continue;
         field[key] = { value: option.value };
@@ -51,9 +53,9 @@ function getErrors(options) {
 }
 exports.getErrors = getErrors;
 function getErrorsAndMutate(options) {
-    const field = {};
-    for (let key in options) {
-        const option = resolveMutatingValidationOption(options[key]);
+    var field = {};
+    for (var key in options) {
+        var option = resolveMutatingValidationOption(options[key]);
         if (!option.validateIf)
             continue;
         field[key] = { value: typeof option.property === "function" ? option.property(option.target) : option.target[option.property] };
@@ -68,8 +70,9 @@ function getErrorsAndMutate(options) {
 }
 exports.getErrorsAndMutate = getErrorsAndMutate;
 function validateValue(value, rules) {
-    for (let rule of rules) {
-        const validation = validateAsOptional(value, rule);
+    for (var _i = 0, rules_1 = rules; _i < rules_1.length; _i++) {
+        var rule = rules_1[_i];
+        var validation = validateAsOptional(value, rule);
         if (!validation.isValid)
             return false;
     }
@@ -77,9 +80,10 @@ function validateValue(value, rules) {
 }
 exports.validateValue = validateValue;
 function validateFieldAndMutate(target, property, rules) {
-    const val = typeof property === "function" ? property(target) : target[property || "value"];
-    for (let rule of rules) {
-        const validation = validateAsOptional(val, rule);
+    var val = typeof property === "function" ? property(target) : target[property || "value"];
+    for (var _i = 0, rules_2 = rules; _i < rules_2.length; _i++) {
+        var rule = rules_2[_i];
+        var validation = validateAsOptional(val, rule);
         if (!validation.isValid) {
             if (validation.rule === "required") {
                 utils_1.set(target, "$isEmpty", true);
@@ -106,7 +110,7 @@ function invalidateMutatedField(target) {
 }
 exports.invalidateMutatedField = invalidateMutatedField;
 function validateAsOptional(value, rule) {
-    const intialValidation = rule(value);
+    var intialValidation = rule(value);
     if (intialValidation.rule === "required")
         return intialValidation;
     if (required_1.isEmpty(value) || intialValidation.isValid)

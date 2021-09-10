@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.constants = exports.isEqual = exports.objectHasProperty = exports.objectIsEmpty = exports.toRegex = exports.unset = exports.set = exports.isControlKey = void 0;
 function isControlKey(evt) {
-    const code = evt.keyCode;
+    var code = evt.keyCode;
     return ((code === 8) ||
         (code === 9) ||
         (code >= 17 && code <= 20) ||
@@ -32,8 +32,8 @@ function unset(target, key) {
 exports.unset = unset;
 function toRegex(val) {
     try {
-        const flags = val.replace(/.*\/([gimy]*)$/, '$1');
-        const pattern = val.replace(new RegExp('^/(.*?)/' + flags + '$'), '$1');
+        var flags = val.replace(/.*\/([gimy]*)$/, '$1');
+        var pattern = val.replace(new RegExp('^/(.*?)/' + flags + '$'), '$1');
         return new RegExp(pattern, flags);
     }
     catch (_a) {
@@ -48,13 +48,13 @@ exports.objectIsEmpty = objectIsEmpty;
 function objectHasProperty(obj, prop) {
     if (obj === undefined || obj === null)
         return false;
-    const proto = obj.__proto__ || obj.constructor.prototype;
+    var proto = obj.__proto__ || obj.constructor.prototype;
     return (prop in obj) && (!(prop in proto) || proto[prop] !== obj[prop]);
 }
 exports.objectHasProperty = objectHasProperty;
 function isEqual(value, other) {
     // Get the value type
-    const type = Object.prototype.toString.call(value);
+    var type = Object.prototype.toString.call(value);
     // If the two objects are not the same type, return false
     if (type !== Object.prototype.toString.call(other))
         return false;
@@ -63,14 +63,14 @@ function isEqual(value, other) {
         return value === other;
     }
     // Compare the length of the length of the two items
-    const valueLen = type === '[object Array]' ? value.length : Object.keys(value).length;
-    const otherLen = type === '[object Array]' ? other.length : Object.keys(other).length;
+    var valueLen = type === '[object Array]' ? value.length : Object.keys(value).length;
+    var otherLen = type === '[object Array]' ? other.length : Object.keys(other).length;
     if (valueLen !== otherLen)
         return false;
     // Compare two items
-    const compare = function (item1, item2) {
+    var compare = function (item1, item2) {
         // Get the object type
-        const itemType = Object.prototype.toString.call(item1);
+        var itemType = Object.prototype.toString.call(item1);
         // If an object or array, compare recursively
         if (['[object Array]', '[object Object]'].indexOf(itemType) >= 0) {
             if (!isEqual(item1, item2))
@@ -95,13 +95,13 @@ function isEqual(value, other) {
     };
     // Compare properties
     if (type === '[object Array]') {
-        for (let i = 0; i < valueLen; i++) {
+        for (var i = 0; i < valueLen; i++) {
             if (compare(value[i], other[i]) === false)
                 return false;
         }
     }
     else {
-        for (const key in value) {
+        for (var key in value) {
             if (value.hasOwnProperty(key)) {
                 if (compare(value[key], other[key]) === false)
                     return false;

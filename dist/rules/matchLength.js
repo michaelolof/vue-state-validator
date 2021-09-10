@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.matchLength = void 0;
-exports.matchLength = (length) => (value) => {
-    const isOfLength = (val) => {
+exports.matchLength = function (length) { return function (value) {
+    var isOfLength = function (val) {
         if (typeof val === "string")
             val = val.trim();
-        const l = (Array.isArray(val) || typeof val === "string") ? val.length : (val + "").length;
+        var l = (Array.isArray(val) || typeof val === "string") ? val.length : (val + "").length;
         return l === length;
     };
     if (isOfLength(value))
@@ -15,4 +15,4 @@ exports.matchLength = (length) => (value) => {
         };
     else
         return { isValid: false, rule: "matchLength" };
-};
+}; };

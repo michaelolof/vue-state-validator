@@ -1,5 +1,5 @@
 import { invalidateMutatedField, validateAndMutate, validateFieldAndMutate, validateValue } from "./validators";
-import { alpha, alphaNumeric, integer, max, numeric, Rule, Validation, maxChar, match } from "./rules";
+import { alpha, alphaNumeric, integer, max, numeric, Rule, Validation, maxChar, match } from ".";
 import { constants, isControlKey, toRegex } from "./utils";
 
 

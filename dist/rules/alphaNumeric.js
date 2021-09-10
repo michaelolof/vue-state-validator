@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.alphaNumeric = void 0;
-exports.alphaNumeric = (value) => {
+exports.alphaNumeric = function (value) {
     if (isAlphaNumeric(value))
         return {
             isValid: true,

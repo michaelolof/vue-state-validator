@@ -1,4 +1,4 @@
-import { range } from "../../../src/rules";
+import { range } from "../../../src/rules/range";
 
 
 describe("range()", () => {

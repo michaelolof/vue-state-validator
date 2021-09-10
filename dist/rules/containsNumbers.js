@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.containsNumber = void 0;
-exports.containsNumber = (size) => (value) => {
-    const numbersFound = () => {
-        let found = 0;
-        for (let char of (value) + "") {
-            const charIsNumber = isNaN(char) === false;
+exports.containsNumber = function (size) { return function (value) {
+    var numbersFound = function () {
+        var found = 0;
+        for (var _i = 0, _a = (value) + ""; _i < _a.length; _i++) {
+            var char = _a[_i];
+            var charIsNumber = isNaN(char) === false;
             if (charIsNumber)
                 found++;
         }
@@ -18,4 +19,4 @@ exports.containsNumber = (size) => (value) => {
         };
     else
         return { isValid: false, rule: "containsNumber" };
-};
+}; };

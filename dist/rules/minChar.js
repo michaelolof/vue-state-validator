@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.minChar = void 0;
-exports.minChar = (minimum) => (value) => {
+exports.minChar = function (minimum) { return function (value) {
     if ((value + "").length >= minimum)
         return {
             isValid: true,
@@ -9,4 +9,4 @@ exports.minChar = (minimum) => (value) => {
         };
     else
         return { isValid: false, rule: "minChar" };
-};
+}; };

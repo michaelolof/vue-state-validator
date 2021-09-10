@@ -1,4 +1,4 @@
-import { alphaNumeric } from "../../../src/rules";
+import { alphaNumeric } from "../../../src/rules/alphaNumeric";
 
 
 

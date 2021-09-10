@@ -1,4 +1,4 @@
-import { minWord } from "../../../src/rules";
+import { minWord } from "../../../src/rules/minWord";
 
 
 describe("minWord()", () => {
