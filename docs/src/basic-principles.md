@@ -1,18 +1,20 @@
 # Basic Principles
 
-VueStateValidator reports validation errors on 2 guiding principles. It believes your forms can only fail validation because they are **empty** or **wrong**.
+VueStateValidator reports validation errors on two (2) guiding principles.\
+It believes your forms can only fail validation because they are **empty** or **wrong**.
 
 These 2 simple rules allow the library to be unassuming and minimalistic in its approach.
 
 
 We represent emptiness with the `$isEmpty` field. \
 We represent wrongness with the `$isWrong` field. \
-These 2 fields will be attached if validation fails when you call the `validateAndMutate` function. \
-Only 1 of `$isEmpty` or `$isWrong` field will be attached at a time.
+<br>
+These two (2) fields will be attached if validation fails when you call the `validateAndMutate` function. \
+Only one (1) of `$isEmpty` or `$isWrong` field will be attached at a time.
 <br><br>
 The last field which will always be attached if validation fails is the `$rule` field. \
 The `$rule` field defines which rule failed validation.
-This allow us narrow down where our validation failed for more streamlined reporting.
+This will allow us narrow down where our validation failed for more streamlined reporting.
 
 <br><br>
 Take a look. Our ealier example can be extended to look like this:
@@ -32,4 +34,4 @@ Take a look. Our ealier example can be extended to look like this:
 <template>
 ```
 
-This way, we can inform our users exactly why and where their validation failed.
+This way, we can inform our users exactly where and how their validation failed.

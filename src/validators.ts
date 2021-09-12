@@ -3,7 +3,7 @@ import { isEmpty, required } from "./rules/required";
 import { objectIsEmpty, set, unset } from "./utils";
 
 
-interface Field {
+interface Err {
   [x :string]:any;
   $isEmpty?: boolean;
   $isWrong?: boolean;
@@ -20,25 +20,11 @@ export interface ValidatorOption {
   validateIf?: boolean;
 }
 
-type MutationOptionProperty = string | ((t : object) => any);
 export interface MutatingValidatorOption {
-  target: object,
-  property?: MutationOptionProperty;
+  value: any;
+  err: object,
   rules?: Rule | Rule[];
   validateIf?: boolean;
-}
-
-export interface ValidatorStateOption {
-  name: string,
-  value: string|number;
-  rules?: Rule | Rule[];
-  order?: number;
-  validateIf?: boolean;
-}
-
-
-export interface ValidationState {
-  [field :string]: Field
 }
 
 
@@ -77,7 +63,7 @@ export function validateAndMutate(options :MutatingValidatorOption[]) :boolean {
 
       if(!option.validateIf) continue;
 
-      const isValid = validateFieldAndMutate(option.target, option.property, option.rules);
+      const isValid = validateFieldAndMutate(option.value, option.err, option.rules);
 
       if( isValid === false ) rtn = isValid;
 
@@ -87,58 +73,6 @@ export function validateAndMutate(options :MutatingValidatorOption[]) :boolean {
 
   }
 }
-
-
-export function getErrors(options :Dictionary<ValidatorOption>) :Dictionary<Field> {
-  
-    const field: Dictionary<Field> = {}
-    
-    for(let key in options) {
-
-      const option = resolvePureValidationOption(options[key]);
-
-      if(!option.validateIf) continue;
-
-      field[ key ] = { value: option.value };
-
-      validateFieldAndMutate( field[ key ], "value", option.rules )
-
-      // Clean up the field object after validation.
-      delete field[ key ][ "value" ];
-      if(objectIsEmpty(field[key])) delete field[ key ];
-
-    }
-
-    return field;
-
-}
-
-
-export function getErrorsAndMutate(options :Dictionary<MutatingValidatorOption>) :Dictionary<Field> { 
-  
-  const field: Dictionary<Field> = {}
-    
-  for(let key in options) {
-
-    const option = resolveMutatingValidationOption(options[key]);
-
-    if(!option.validateIf) continue;
-
-    field[ key ] = { value: typeof option.property === "function" ? option.property(option.target) : option.target[option.property] };
-
-    validateFieldAndMutate( field[ key ], "value", option.rules )
-    validateFieldAndMutate( option.target, option.property, option.rules )
-
-    // Clean up the field object after validation.
-    delete field[ key ][ "value" ];
-    if(objectIsEmpty(field[key])) delete field[key];
-
-  }
-
-  return field;
-}
-
-
 
 
 export function validateValue(value :any, rules :Rule[]) :boolean {
@@ -152,32 +86,30 @@ export function validateValue(value :any, rules :Rule[]) :boolean {
 }
 
 
-export function validateFieldAndMutate(target :Field, property :MutationOptionProperty, rules :Rule[]) :boolean {
-
-  const val = typeof property === "function" ? property(target) : target[ property || "value" ];
+export function validateFieldAndMutate(value: any, err :Err, rules :Rule[]) :boolean {
 
   for(let rule of rules) {
     
-    const validation = validateAsOptional(val, rule);
+    const validation = validateAsOptional(value, rule);
     
     if(!validation.isValid) {
       
       if(validation.rule === "required") { 
-        set(target, "$isEmpty", true);
-        unset(target, "$isWrong");
+        set(err, "$isEmpty", true);
+        unset(err, "$isWrong");
       }
       else { 
-        set(target, "$isWrong", true);
-        unset(target, "$isEmpty");
+        set(err, "$isWrong", true);
+        unset(err, "$isEmpty");
       }
       
-      set(target, "$rule", validation.rule);
+      set(err, "$rule", validation.rule);
       
       return false
       
     }
     else {
-      invalidateMutatedField(target);
+      invalidateMutatedField(err);
     }
 
   }
@@ -233,12 +165,12 @@ function resolveMutatingValidationOptions(options :MutatingValidatorOption[]) :M
 
 function resolveMutatingValidationOption(option :MutatingValidatorOption) :MutatingValidatedOption {
 
-  if(!option.target) throw new Error("VueStateValidatorError: target is a required field");
-  else if(typeof option.target !== "object") throw new Error("VueStateValidatorError: Unknown target type entered. target should be an object");
+  if(!option.err) throw new Error("VueStateValidatorError: err is a required field\n\r" + JSON.stringify(option));
+  else if(typeof option.err !== "object") throw new Error("VueStateValidatorError: Unknown err type entered. err should be an object\n\r" + JSON.stringify(option));
 
   return {
-    target: option.target,
-    property: option.property || "value",
+    value: option.value,
+    err: option.err,
     rules: resolveRules(option.rules),
     validateIf: resolveValidateIf(option.validateIf)
   }
@@ -258,7 +190,7 @@ function resolveValidateIf(validateIf?: boolean) {
 
 
 interface ValidatedOption {
-  field :Field;
+  field :Err;
   rules :Rule[];
   value :string;
   order :number;
@@ -272,8 +204,8 @@ interface PureValidatedOption {
 }
 
 interface MutatingValidatedOption {
-  target: Dictionary<any>,
-  property: MutationOptionProperty;
+  value: any;
+  err: Dictionary<any>,
   rules: Rule[];
   validateIf: boolean;  
 }
