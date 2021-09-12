@@ -1,5 +1,5 @@
 import VueStateValidator from "./plugin";
-export { ValidatorOption, validate, validateAndMutate, getErrors, getErrorsAndMutate, ValidatorStateOption } from "./validators";
+export { ValidatorOption, validate, validateAndMutate, MutatingValidatorOption } from "./validators";
 export { } from "./utils"
 export { alpha } from "./rules/alpha";
 export { alphaNumeric } from "./rules/alphaNumeric";

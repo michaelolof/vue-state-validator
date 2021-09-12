@@ -4,7 +4,6 @@
       <router-link to="/">One</router-link> |
       <router-link to="/two">Two</router-link> |
       <router-link to="/three">Three</router-link> |
-      <router-link to="/four">Four</router-link> |
     </div>
     <router-view/>
   </div>

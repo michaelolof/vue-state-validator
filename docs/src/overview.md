@@ -33,7 +33,7 @@ export default {
   methods: {
     submit() {
       const options = [
-        { target: this.fullname, rules: this.fullname.rules }
+        { value: this.fullname.value, rules: this.fullname.rules, err: this.fullname }
       ]
 
       const isValid = validateAndMutate(options);
@@ -43,10 +43,10 @@ export default {
 </script>
 ```
 
-Here we've declared that fullname must be **required, just 2 words and between 3 to 20 characters.** We do this by passing an array of rules that define how the `target` value is to be validated.
+Here we've declared that fullname must be **required, just 2 words and between 3 to 20 characters.** We do this by passing an array of rules that define how the `value` is to be validated.
 <br><br>
-When the Save button is clicked, we run our validation in the `submit` method by calling `validateAndMutate` function with the `validation options`. \
+When the Save button is clicked, we run our validation in the `submit` method by calling `validateAndMutate` function with the validation `options`. \
 <br>
-The validator will check for a `value` property on the `target` object defined (in this case `fullname`) and apply the `rules` defined to it. \
+The validator will apply the defined `rules` to the `value` defined for each option. \
 The function will return `true` if validation passes. \
-The function will return `false` and attach 2 of the three special fields `$isEmpty`, `$isWrong` and `$rule` if validation fails. This is the mutating part of the validation.
+The function will return `false` and attach 2 of the three special fields `$isEmpty`, `$isWrong` and `$rule` on the `err` object (in this case `fullname`) if validation fails. This is the mutating part of the `valideAndMutate` functionality.

@@ -4,13 +4,13 @@ This library also comes with a couple of helper directives to simplify common va
 
 
 ## v-vsv-on 
-`v-vsv-on.[validateModifier].[invalidateModifier]="[MutatingValidationOption]"`
+`v-vsv-on.[validateModifier].[invalidateModifier]="[MutatingValidatorOption]"`
 
 This helper directive allows you directly bind a validation rule to an input element.
 
 ```html
 <template>
-  <input v-model="age.value" v-vsv-on.blur.focus="{ target: age, rules: age.rules }">
+  <input v-model="age.value" v-vsv-on.blur.focus="{ value: age.value, rules: age.rules, err: age }">
   <span v-if="age.$isEmpty">Please enter your age.</span>
   <span v-else-if="age.$isWrong">Please enter a valid age between 18 and 45 years</span>
 </template>
@@ -35,29 +35,23 @@ Both the `[validateModifier]` and `[invalidateModifier]` are optional.
 When only the `[validateModifier]` is passed, It will validate but not invalidate.
 ```html
 <!-- This will validate as you're typing (i.e on input) -->
-<input v-model="age" v-vsv-on.input="{ target: age, rules: age.rules }">
+<input v-model="age" v-vsv-on.input="{ value: age.value, rules: age.rules, err: age }">
 ```
 
-When non of the modifiers are passed, It will only validate on `blur`
+When none of the modifiers are passed, It will only validate on `blur`
 ```html
 <!-- This will by default validate on blur but not invalidate -->
-<input v-model="age" v-vsv-on="{ target: age, rules: age.rules }">
-```
-
-You can also choose to pass a `property` and even a `validateIf` value just like any validator options
-```html
-<input v-model="age" v-vsv-on="{ target: age, rules: age.rules, property: 'value' }">
+<input v-model="age" v-vsv-on="{ value: age.value, rules: age.rules, err: age }">
 ```
 
 A shortand syntax is also supported where you can use an array instead of an object
 ```html
-<!-- Target has to be the first, rules second and property third -->
-<input v-model="age" v-vsv-on="[ age, age.rules ]">
-<input v-model="age" v-vsv-on="[ age, age.rules, 'value' ]">
+<!-- value has to be the first, rules second and err third -->
+<input v-model="age" v-vsv-on="[ age.value, age.rules, age ]">
 ```
 The shorthand syntax has the following order.
 ```html
-<input v-model="age" v-vsv-on="[ [target], [rules], [property], [validateIf] ]">
+<input v-model="age" v-vsv-on="[ <value>, <rules>, <err>, <validateIf> ]">
 ```
 
 <br><br>

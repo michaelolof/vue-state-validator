@@ -3,13 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.wordRange = exports.url = exports.isEmpty = exports.required = exports.range = exports.numeric = exports.notContain = exports.minWord = exports.minChar = exports.min = exports.maxWord = exports.maxChar = exports.max = exports.matchLength = exports.match = exports.macAddress = exports.ipAddress = exports.integer = exports.equal = exports.email = exports.decimal = exports.containsNumbers = exports.contains = exports.charRange = exports.alphaNumeric = exports.alpha = exports.getErrorsAndMutate = exports.getErrors = exports.validateAndMutate = exports.validate = void 0;
+exports.wordRange = exports.url = exports.isEmpty = exports.required = exports.range = exports.numeric = exports.notContain = exports.minWord = exports.minChar = exports.min = exports.maxWord = exports.maxChar = exports.max = exports.matchLength = exports.match = exports.macAddress = exports.ipAddress = exports.integer = exports.equal = exports.email = exports.decimal = exports.containsNumbers = exports.contains = exports.charRange = exports.alphaNumeric = exports.alpha = exports.validateAndMutate = exports.validate = void 0;
 var plugin_1 = __importDefault(require("./plugin"));
 var validators_1 = require("./validators");
 Object.defineProperty(exports, "validate", { enumerable: true, get: function () { return validators_1.validate; } });
 Object.defineProperty(exports, "validateAndMutate", { enumerable: true, get: function () { return validators_1.validateAndMutate; } });
-Object.defineProperty(exports, "getErrors", { enumerable: true, get: function () { return validators_1.getErrors; } });
-Object.defineProperty(exports, "getErrorsAndMutate", { enumerable: true, get: function () { return validators_1.getErrorsAndMutate; } });
 var alpha_1 = require("./rules/alpha");
 Object.defineProperty(exports, "alpha", { enumerable: true, get: function () { return alpha_1.alpha; } });
 var alphaNumeric_1 = require("./rules/alphaNumeric");

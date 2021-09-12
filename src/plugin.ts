@@ -38,7 +38,7 @@ function useValidateOn() {
     let option = binding.value || { target: { value: undefined } }
     
     if(Array.isArray(option)) {
-      option = { target: option[0], rules: option[1], property: option[2], validateIf: option[3] }
+      option = { value: option[0], rules: option[1], err: option[2], validateIf: option[3] }
     }    
 
     

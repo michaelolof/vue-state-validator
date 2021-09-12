@@ -54,9 +54,9 @@ import { required, charRange, wordRange, integer, range, numeric, min, max, vali
        *  - Amount is required must be a number, and must be between 100 and 100,000
        */
       const options = [
-        { target: this.fullname, rules: this.fullname.rules },
-        { target: this.age, rules: this.age.rules },
-        { target: this.amount, rules: this.amount.rules }
+        { value: this.fullname.value, rules: this.fullname.rules, err: this.fullname },
+        { value: this.age.value, rules: this.age.rules, err: this.age },
+        { value: this.amount.value, rules: this.amount.rules, err: this.amount }
       ]
 
       const isValid = validateAndMutate(options);
@@ -68,7 +68,7 @@ import { required, charRange, wordRange, integer, range, numeric, min, max, vali
   }
 }
 ```
-This will validate the fields entered against the rules given and mutate the properties in the field object.
+This will validate the fields entered against the rules given and mutate the `err` object.
 This will result in a data object that looks like this:
 ```js
 {
@@ -96,10 +96,10 @@ This will result in a data object that looks like this:
   }
 }
 ```
-You would notice three properties `$isEmpty` `$isWrong` and `$rule` on the object being validated.
+You would notice three properties `$isEmpty` `$isWrong` and `$rule` on the `err` being validated.
 \
 VueStateValidator at its core assumes that validation errors can only ever be **empty or wrong.** This means a validation can either fail because the client didn't enter a value, or the client entered a wrong value. 
-We also recognize the need to give detailed error messages which provide context to where the failure occured - this is the information the `$rule` field gives to us. It lets us know which rule caused validation failure. 
+We also recognize the need to give detailed error messages to provide context to where the failure occured - this is the information the `$rule` field gives. It lets us know which rule caused validation failure. 
 If the validation is successfull, `$rule` is `undefined`
 
 In your HTML, you'd do some thing like this to display the errors.

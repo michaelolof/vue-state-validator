@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.invalidateMutatedField = exports.validateFieldAndMutate = exports.validateValue = exports.getErrorsAndMutate = exports.getErrors = exports.validateAndMutate = exports.validate = void 0;
+exports.invalidateMutatedField = exports.validateFieldAndMutate = exports.validateValue = exports.validateAndMutate = exports.validate = void 0;
 var required_1 = require("./rules/required");
 var utils_1 = require("./utils");
 function validate(options) {
@@ -28,7 +28,7 @@ function validateAndMutate(options) {
             var option = options_2[_i];
             if (!option.validateIf)
                 continue;
-            var isValid = validateFieldAndMutate(option.target, option.property, option.rules);
+            var isValid = validateFieldAndMutate(option.value, option.err, option.rules);
             if (isValid === false)
                 rtn = isValid;
         }
@@ -36,39 +36,6 @@ function validateAndMutate(options) {
     }
 }
 exports.validateAndMutate = validateAndMutate;
-function getErrors(options) {
-    var field = {};
-    for (var key in options) {
-        var option = resolvePureValidationOption(options[key]);
-        if (!option.validateIf)
-            continue;
-        field[key] = { value: option.value };
-        validateFieldAndMutate(field[key], "value", option.rules);
-        // Clean up the field object after validation.
-        delete field[key]["value"];
-        if (utils_1.objectIsEmpty(field[key]))
-            delete field[key];
-    }
-    return field;
-}
-exports.getErrors = getErrors;
-function getErrorsAndMutate(options) {
-    var field = {};
-    for (var key in options) {
-        var option = resolveMutatingValidationOption(options[key]);
-        if (!option.validateIf)
-            continue;
-        field[key] = { value: typeof option.property === "function" ? option.property(option.target) : option.target[option.property] };
-        validateFieldAndMutate(field[key], "value", option.rules);
-        validateFieldAndMutate(option.target, option.property, option.rules);
-        // Clean up the field object after validation.
-        delete field[key]["value"];
-        if (utils_1.objectIsEmpty(field[key]))
-            delete field[key];
-    }
-    return field;
-}
-exports.getErrorsAndMutate = getErrorsAndMutate;
 function validateValue(value, rules) {
     for (var _i = 0, rules_1 = rules; _i < rules_1.length; _i++) {
         var rule = rules_1[_i];
@@ -79,25 +46,24 @@ function validateValue(value, rules) {
     return true;
 }
 exports.validateValue = validateValue;
-function validateFieldAndMutate(target, property, rules) {
-    var val = typeof property === "function" ? property(target) : target[property || "value"];
+function validateFieldAndMutate(value, err, rules) {
     for (var _i = 0, rules_2 = rules; _i < rules_2.length; _i++) {
         var rule = rules_2[_i];
-        var validation = validateAsOptional(val, rule);
+        var validation = validateAsOptional(value, rule);
         if (!validation.isValid) {
             if (validation.rule === "required") {
-                utils_1.set(target, "$isEmpty", true);
-                utils_1.unset(target, "$isWrong");
+                utils_1.set(err, "$isEmpty", true);
+                utils_1.unset(err, "$isWrong");
             }
             else {
-                utils_1.set(target, "$isWrong", true);
-                utils_1.unset(target, "$isEmpty");
+                utils_1.set(err, "$isWrong", true);
+                utils_1.unset(err, "$isEmpty");
             }
-            utils_1.set(target, "$rule", validation.rule);
+            utils_1.set(err, "$rule", validation.rule);
             return false;
         }
         else {
-            invalidateMutatedField(target);
+            invalidateMutatedField(err);
         }
     }
     return true;
@@ -135,13 +101,13 @@ function resolveMutatingValidationOptions(options) {
     return options.map(resolveMutatingValidationOption);
 }
 function resolveMutatingValidationOption(option) {
-    if (!option.target)
-        throw new Error("VueStateValidatorError: target is a required field");
-    else if (typeof option.target !== "object")
-        throw new Error("VueStateValidatorError: Unknown target type entered. target should be an object");
+    if (!option.err)
+        throw new Error("VueStateValidatorError: err is a required field\n\r" + JSON.stringify(option));
+    else if (typeof option.err !== "object")
+        throw new Error("VueStateValidatorError: Unknown err type entered. err should be an object\n\r" + JSON.stringify(option));
     return {
-        target: option.target,
-        property: option.property || "value",
+        value: option.value,
+        err: option.err,
         rules: resolveRules(option.rules),
         validateIf: resolveValidateIf(option.validateIf)
     };

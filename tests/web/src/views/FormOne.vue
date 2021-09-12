@@ -64,10 +64,10 @@ export default {
 
     submit() {
       const options = [
-        { target: this.fullname, rules: [required, charRange(3, 20), wordRange(2,2)] },
-        { target: this.age, rules: [required, min(12), max(45)] },
-        { target: this.amount, rules: [required, range(100,100_000)]},
-        { target: this.note, rules: [wordRange(3, 20)]}
+        { value: this.fullname.value, rules: [required, charRange(3, 20), wordRange(2,2)], err: this.fullname },
+        { value: this.age.value, rules: [required, min(12), max(45)], err: this.age },
+        { value: this.amount.value, rules: [required, range(100,100_000)], err: this.amount },
+        { value: this.note.value, rules: [wordRange(3, 20)], err: this.note }
       ]
 
       const isValid = validateAndMutate(options);
