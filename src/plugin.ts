@@ -6,9 +6,7 @@ import { constants, isControlKey, toRegex } from "./utils";
 function useValidateOn() {
 
   const validationHandler = (option :any, eventName :string) => (evt :any) => {
-    if(evt === undefined || evt instanceof Event === false) return;
-
-    evt.stopPropagation();
+    if(evt && evt instanceof Event) evt.stopPropagation();
     /**
      * For 'input' validating event wait 21.5 seconds before kicking in validation for better experience
      */
@@ -21,7 +19,8 @@ function useValidateOn() {
   }
 
   const invalidationHandler = (option :any) => (evt: any) => {
-    evt.stopPropagation();
+    if(evt && evt instanceof Event) evt.stopPropagation();
+    
     invalidateMutatedField(option.target);
   }
 
@@ -185,17 +184,6 @@ function useValidateAllow() {
 
 }
 
-function validateValueChars(value :string, rules :Rule[]) {
-  let isValid = true;
-  for(let char of value) {
-    isValid = validateValue(char, rules);
-    if(isValid === false) {
-      return false;
-    }
-  }
-  return isValid;
-}
-
 function useValidateMax() {
 
   const validateMaxHandler = (maximum :number, el :any) => (evt :any) => {
@@ -305,6 +293,17 @@ function numericChar(value :any) :Validation {
     rule: undefined
   }
   else return { isValid: false, rule: "numeric" }
+}
+
+function validateValueChars(value :string, rules :Rule[]) {
+  let isValid = true;
+  for(let char of value) {
+    isValid = validateValue(char, rules);
+    if(isValid === false) {
+      return false;
+    }
+  }
+  return isValid;
 }
 
 
