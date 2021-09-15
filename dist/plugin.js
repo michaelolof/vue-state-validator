@@ -5,9 +5,8 @@ var _1 = require(".");
 var utils_1 = require("./utils");
 function useValidateOn() {
     var validationHandler = function (option, eventName) { return function (evt) {
-        if (evt === undefined || evt instanceof Event === false)
-            return;
-        evt.stopPropagation();
+        if (evt && evt instanceof Event)
+            evt.stopPropagation();
         /**
          * For 'input' validating event wait 21.5 seconds before kicking in validation for better experience
          */
@@ -20,7 +19,8 @@ function useValidateOn() {
             validators_1.validateAndMutate([option]);
     }; };
     var invalidationHandler = function (option) { return function (evt) {
-        evt.stopPropagation();
+        if (evt && evt instanceof Event)
+            evt.stopPropagation();
         validators_1.invalidateMutatedField(option.target);
     }; };
     var validationEvent = "blur";
@@ -168,17 +168,6 @@ function useValidateAllow() {
         }
     };
 }
-function validateValueChars(value, rules) {
-    var isValid = true;
-    for (var _i = 0, value_1 = value; _i < value_1.length; _i++) {
-        var char = value_1[_i];
-        isValid = validators_1.validateValue(char, rules);
-        if (isValid === false) {
-            return false;
-        }
-    }
-    return isValid;
-}
 function useValidateMax() {
     var validateMaxHandler = function (maximum, el) { return function (evt) {
         if (evt === undefined || evt instanceof Event === false)
@@ -274,6 +263,17 @@ function numericChar(value) {
         };
     else
         return { isValid: false, rule: "numeric" };
+}
+function validateValueChars(value, rules) {
+    var isValid = true;
+    for (var _i = 0, value_1 = value; _i < value_1.length; _i++) {
+        var char = value_1[_i];
+        isValid = validators_1.validateValue(char, rules);
+        if (isValid === false) {
+            return false;
+        }
+    }
+    return isValid;
 }
 exports.default = {
     install: function (Vue) {
