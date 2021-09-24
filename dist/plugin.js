@@ -7,16 +7,8 @@ function useValidateOn() {
     var validationHandler = function (option, eventName) { return function (evt) {
         if (evt && evt instanceof Event)
             evt.stopPropagation();
-        /**
-         * For 'input' validating event wait 21.5 seconds before kicking in validation for better experience
-         */
-        if (eventName === "input") {
-            setTimeout(function () {
-                validators_1.validateAndMutate([option]);
-            }, 1500);
-        }
-        else
-            validators_1.validateAndMutate([option]);
+        var timeout = eventName === "input" ? 1200 : 800;
+        utils_1.debounce(function () { return validators_1.validateAndMutate([option]); }, timeout);
     }; };
     var invalidationHandler = function (option) { return function (evt) {
         if (evt && evt instanceof Event)

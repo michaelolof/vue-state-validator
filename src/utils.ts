@@ -122,9 +122,15 @@ export function isEqual(value: any, other: any) {
 
 };
 
+export function debounce(fn :(...args:any) => any, ms: number, eventName = "global_event_id") {
+	clearTimeout(constants.debounceEvents[eventName])
+	constants.debounceEvents[eventName] = setTimeout(fn, ms)
+}
+
 
 export const constants = {
-  Vue: undefined as VueObj | undefined
+  Vue: undefined as VueObj | undefined,
+	debounceEvents: {} as {[x:string]: NodeJS.Timeout},
 }
 
 interface VueObj {

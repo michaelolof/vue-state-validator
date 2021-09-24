@@ -1,21 +1,16 @@
 import { invalidateMutatedField, validateAndMutate, validateFieldAndMutate, validateValue } from "./validators";
 import { alpha, alphaNumeric, integer, max, numeric, Rule, Validation, maxChar, match } from ".";
-import { constants, isControlKey, toRegex } from "./utils";
+import { constants, debounce, isControlKey, toRegex } from "./utils";
 
 
 function useValidateOn() {
 
   const validationHandler = (option :any, eventName :string) => (evt :any) => {
     if(evt && evt instanceof Event) evt.stopPropagation();
-    /**
-     * For 'input' validating event wait 21.5 seconds before kicking in validation for better experience
-     */
-    if(eventName === "input") {
-      setTimeout(() => {
-        validateAndMutate([option]);
-      }, 1500)
-    }
-    else validateAndMutate([ option ]);
+
+    const timeout = eventName === "input" ? 1200 : 800;
+    debounce(() => validateAndMutate([option]), timeout)
+
   }
 
   const invalidationHandler = (option :any) => (evt: any) => {

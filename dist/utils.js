@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.constants = exports.isEqual = exports.objectHasProperty = exports.objectIsEmpty = exports.toRegex = exports.unset = exports.set = exports.isControlKey = void 0;
+exports.constants = exports.debounce = exports.isEqual = exports.objectHasProperty = exports.objectIsEmpty = exports.toRegex = exports.unset = exports.set = exports.isControlKey = void 0;
 function isControlKey(evt) {
     var code = evt.keyCode;
     return ((code === 8) ||
@@ -113,6 +113,13 @@ function isEqual(value, other) {
 }
 exports.isEqual = isEqual;
 ;
+function debounce(fn, ms, eventName) {
+    if (eventName === void 0) { eventName = "global_event_id"; }
+    clearTimeout(exports.constants.debounceEvents[eventName]);
+    exports.constants.debounceEvents[eventName] = setTimeout(fn, ms);
+}
+exports.debounce = debounce;
 exports.constants = {
-    Vue: undefined
+    Vue: undefined,
+    debounceEvents: {},
 };
