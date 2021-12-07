@@ -190,7 +190,7 @@ function useValidateMax() {
       evt.preventDefault();
       const event = document.createEvent("Event");
       event.initEvent("input", true, true);
-      el.value = maximum;
+      if(maximum) el.value = maximum;
       el.dispatchEvent(event);
     }
   }

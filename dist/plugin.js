@@ -170,7 +170,8 @@ function useValidateMax() {
             evt.preventDefault();
             var event_1 = document.createEvent("Event");
             event_1.initEvent("input", true, true);
-            el.value = maximum;
+            if (maximum)
+                el.value = maximum;
             el.dispatchEvent(event_1);
         }
     }; };
