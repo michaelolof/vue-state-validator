@@ -158,7 +158,7 @@ function resolvePureValidationOption(option :ValidatorOption) :PureValidatedOpti
 
 function resolveMutatingValidationOptions(options :MutatingValidatorOption[]) :MutatingValidatedOption[] {
   
-  return options.map( resolveMutatingValidationOption );
+  return options.filter(o => !!o).map( resolveMutatingValidationOption );
   
 }
 

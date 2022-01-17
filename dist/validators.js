@@ -98,7 +98,7 @@ function resolvePureValidationOption(option) {
     };
 }
 function resolveMutatingValidationOptions(options) {
-    return options.map(resolveMutatingValidationOption);
+    return options.filter(function (o) { return !!o; }).map(resolveMutatingValidationOption);
 }
 function resolveMutatingValidationOption(option) {
     if (!option.err)

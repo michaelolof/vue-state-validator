@@ -10,10 +10,11 @@ function useValidateOn() {
         var timeout = eventName === "input" ? 1200 : 800;
         utils_1.debounce(function () { return validators_1.validateAndMutate([option]); }, timeout);
     }; };
-    var invalidationHandler = function (option) { return function (evt) {
+    var invalidationHandler = function (option, eventName) { return function (evt) {
         if (evt && evt instanceof Event)
             evt.stopPropagation();
-        validators_1.invalidateMutatedField(option.target);
+        var timeout = eventName === "input" ? 1000 : 300;
+        utils_1.debounce(function () { return validators_1.invalidateMutatedField(option.err); }, timeout);
     }; };
     var validationEvent = "blur";
     var inValidateEvent = undefined;
@@ -40,13 +41,13 @@ function useValidateOn() {
         }
         if (inValidateEvent) {
             if (component) {
-                component.$on(inValidateEvent, invalidationHandler(option));
+                component.$on(inValidateEvent, invalidationHandler(option, inValidateEvent));
             }
             else {
                 if (currentValidationHandler) {
                     el.removeEventListener(inValidateEvent, currentInvalidationHandler);
                 }
-                currentValidationHandler = invalidationHandler(option);
+                currentValidationHandler = invalidationHandler(option, inValidateEvent);
                 el.addEventListener(inValidateEvent, currentInvalidationHandler);
             }
         }

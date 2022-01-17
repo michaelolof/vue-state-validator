@@ -13,10 +13,10 @@ function useValidateOn() {
 
   }
 
-  const invalidationHandler = (option :any) => (evt: any) => {
+  const invalidationHandler = (option :any, eventName: string) => (evt: any) => {
     if(evt && evt instanceof Event) evt.stopPropagation();
-    
-    invalidateMutatedField(option.target);
+    const timeout = eventName === "input" ? 1000 : 300;    
+    debounce(() => invalidateMutatedField(option.err), timeout);
   }
 
   let validationEvent = "blur";
@@ -48,12 +48,12 @@ function useValidateOn() {
 
     if(inValidateEvent) {
       if(component) {
-        component.$on(inValidateEvent, invalidationHandler(option));
+        component.$on(inValidateEvent, invalidationHandler(option, inValidateEvent));
       } else {
         if(currentValidationHandler) { 
           el.removeEventListener(inValidateEvent, currentInvalidationHandler);
         }
-        currentValidationHandler = invalidationHandler(option);
+        currentValidationHandler = invalidationHandler(option, inValidateEvent);
         el.addEventListener(inValidateEvent, currentInvalidationHandler)
       }
     }
