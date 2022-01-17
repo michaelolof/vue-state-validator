@@ -8,14 +8,14 @@ function useValidateOn() {
   const validationHandler = (option :any, eventName :string) => (evt :any) => {
     if(evt && evt instanceof Event) evt.stopPropagation();
 
-    const timeout = eventName === "input" ? 1200 : 800;
+    const timeout = (eventName || "").includes("input") ? 1200 : 800;
     debounce(() => validateAndMutate([option]), timeout)
 
   }
 
   const invalidationHandler = (option :any, eventName: string) => (evt: any) => {
     if(evt && evt instanceof Event) evt.stopPropagation();
-    const timeout = eventName === "input" ? 1000 : 300;    
+    const timeout = (eventName || "").includes("input") ? 600 : 300;    
     debounce(() => invalidateMutatedField(option.err), timeout);
   }
 

@@ -7,13 +7,13 @@ function useValidateOn() {
     var validationHandler = function (option, eventName) { return function (evt) {
         if (evt && evt instanceof Event)
             evt.stopPropagation();
-        var timeout = eventName === "input" ? 1200 : 800;
+        var timeout = (eventName || "").includes("input") ? 1200 : 800;
         utils_1.debounce(function () { return validators_1.validateAndMutate([option]); }, timeout);
     }; };
     var invalidationHandler = function (option, eventName) { return function (evt) {
         if (evt && evt instanceof Event)
             evt.stopPropagation();
-        var timeout = eventName === "input" ? 1000 : 300;
+        var timeout = (eventName || "").includes("input") ? 600 : 300;
         utils_1.debounce(function () { return validators_1.invalidateMutatedField(option.err); }, timeout);
     }; };
     var validationEvent = "blur";
