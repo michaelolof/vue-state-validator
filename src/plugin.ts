@@ -80,7 +80,7 @@ function useValidatePrevent() {
     
     if(isControlKey(evt)) return;
     
-    const value = evt.key.trim();
+    const value = (evt.key || "").trim();
     const isValid = validateValueChars(value, rules);
     if((value+"").length && isValid) evt.preventDefault();
   }
@@ -133,7 +133,7 @@ function useValidateAllow() {
     
     if(isControlKey(evt)) return;
 
-    const value = evt.key.trim();
+    const value = (evt.key || "").trim();
     const isNotValid = validateValueChars(value, rules) === false;
     if((value+"").length && isNotValid) evt.preventDefault();
   }
