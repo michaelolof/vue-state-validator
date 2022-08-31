@@ -123,6 +123,7 @@ export function isEqual(value: any, other: any) {
 };
 
 export function debounce(fn :(...args:any) => any, ms: number, eventName = "global_event_id") {
+	// @ts-ignore
 	clearTimeout(constants.debounceEvents[eventName])
 	constants.debounceEvents[eventName] = setTimeout(fn, ms)
 }

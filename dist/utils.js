@@ -115,6 +115,7 @@ exports.isEqual = isEqual;
 ;
 function debounce(fn, ms, eventName) {
     if (eventName === void 0) { eventName = "global_event_id"; }
+    // @ts-ignore
     clearTimeout(exports.constants.debounceEvents[eventName]);
     exports.constants.debounceEvents[eventName] = setTimeout(fn, ms);
 }
