@@ -12,7 +12,7 @@ export const match = (compare :any) => (value: any) :Validation => {
     }
     
     else return { isValid: false, rule: "match" };
-  } catch(err) {
-    throw err;
+  } catch {
+    return { isValid: false, rule: "match" };
   }
 }

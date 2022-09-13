@@ -12,7 +12,7 @@ exports.match = function (compare) { return function (value) {
         else
             return { isValid: false, rule: "match" };
     }
-    catch (err) {
-        throw err;
+    catch (_a) {
+        return { isValid: false, rule: "match" };
     }
 }; };
